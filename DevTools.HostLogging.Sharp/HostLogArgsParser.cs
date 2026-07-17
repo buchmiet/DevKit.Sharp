@@ -22,6 +22,7 @@ internal static class HostLogArgsParser
 
             if (i + 1 >= args.Length)
             {
+                Warn($"{HostLogOptions.SwitchName} requires a mode ('console' or 'file <path>'). Logging disabled.");
                 continue;
             }
 
@@ -34,23 +35,21 @@ internal static class HostLogArgsParser
 
             if (mode.Equals("file", StringComparison.OrdinalIgnoreCase))
             {
-                if (i + 1 >= args.Length)
+                if (i + 1 >= args.Length || string.IsNullOrWhiteSpace(args[i + 1]))
                 {
-                    continue;
-                }
-
-                var filePath = args[++i];
-                if (string.IsNullOrWhiteSpace(filePath))
-                {
+                    Warn($"{HostLogOptions.SwitchName} file requires a path. Logging disabled.");
                     continue;
                 }
 
                 parsed = new HostLogOptions
                 {
                     Sink = HostLogSink.File,
-                    FilePath = filePath
+                    FilePath = args[++i]
                 };
+                continue;
             }
+
+            Warn($"Unknown {HostLogOptions.SwitchName} mode '{mode}' — expected 'console' or 'file <path>'. Logging disabled.");
         }
 
         args = remaining.ToArray();
@@ -59,4 +58,7 @@ internal static class HostLogArgsParser
 
     private static bool IsSwitch(string value) =>
         value.Equals(HostLogOptions.SwitchName, StringComparison.OrdinalIgnoreCase);
+
+    private static void Warn(string message) =>
+        Console.Error.WriteLine($"[DevTools.HostLogging] {message}");
 }

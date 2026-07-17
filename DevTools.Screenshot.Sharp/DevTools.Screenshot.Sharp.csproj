@@ -2,10 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>DevTools.Screenshot.Sharp</RootNamespace>
-    <AssemblyName>DevTools.Screenshot.Sharp</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <Description>Framework-agnostic contract for capturing app-window screenshots: IScreenshot, ScreenshotOptions and the --devtools-screenshot CLI parser. Pair with DevTools.Screenshot.Avalonia.Sharp or DevTools.Screenshot.WinUi3.Sharp.</Description>
+    <PackageTags>screenshot;capture;ui-testing;visual-testing;ci;devtools</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

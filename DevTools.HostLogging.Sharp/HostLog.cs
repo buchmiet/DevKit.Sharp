@@ -49,9 +49,14 @@ public static class HostLog
             view.OnProgressComplete += () =>
             {
                 session.Close();
-                view.Dispose();
-                Thread.Sleep(400);
-                NativeConsole.Release();
+                // Keep the 100% state visible briefly, then free the console —
+                // off the caller's thread, which is often the host app's UI thread.
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(400).ConfigureAwait(false);
+                    view.Dispose();
+                    NativeConsole.Release();
+                });
             };
         }
 

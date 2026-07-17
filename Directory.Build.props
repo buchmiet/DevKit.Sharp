@@ -1,0 +1,29 @@
+<Project>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Shippable packages opt in with <IsPackable>true</IsPackable>. -->
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package metadata">
+    <Version>0.1.0</Version>
+    <Authors>Lukasz Buchmiet</Authors>
+    <Copyright>Copyright (c) 2026 Lukasz Buchmiet</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/buchmiet/DevTools.Sharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/buchmiet/DevTools.Sharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLink and symbols">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

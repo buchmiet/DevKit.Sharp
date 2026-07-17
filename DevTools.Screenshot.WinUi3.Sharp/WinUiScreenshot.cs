@@ -91,7 +91,7 @@ public sealed class WinUiScreenshot : IScreenshot
         if (!string.IsNullOrEmpty(directory))
             Directory.CreateDirectory(directory);
 
-        using var stream = File.OpenWrite(outputPath);
+        using var stream = File.Create(outputPath);
         var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream.AsRandomAccessStream());
         encoder.SetPixelData(
             BitmapPixelFormat.Bgra8,

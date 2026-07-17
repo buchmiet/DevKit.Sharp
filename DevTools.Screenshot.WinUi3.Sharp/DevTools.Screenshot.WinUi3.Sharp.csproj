@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>DevTools.Screenshot.WinUi3.Sharp</RootNamespace>
-    <AssemblyName>DevTools.Screenshot.WinUi3.Sharp</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <Description>Main-window screenshot capture for WinUI 3 apps: AttachScreenshot one-liner for CI captures driven by --devtools-screenshot, plus IScreenshot for programmatic use.</Description>
+    <PackageTags>screenshot;capture;winui;winui3;windows-app-sdk;ui-testing;visual-testing;ci;devtools</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
@@ -19,12 +19,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" PrivateAssets="all" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DevTools.Screenshot.Sharp\DevTools.Screenshot.Sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

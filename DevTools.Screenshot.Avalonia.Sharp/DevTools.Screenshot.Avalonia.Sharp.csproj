@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>DevTools.Screenshot.Avalonia.Sharp</RootNamespace>
-    <AssemblyName>DevTools.Screenshot.Avalonia.Sharp</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <Description>Main-window screenshot capture for Avalonia apps: AttachScreenshot one-liner for CI captures driven by --devtools-screenshot, plus IScreenshot for programmatic use.</Description>
+    <PackageTags>screenshot;capture;avalonia;ui-testing;visual-testing;ci;devtools</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DevTools.Screenshot.Sharp\DevTools.Screenshot.Sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

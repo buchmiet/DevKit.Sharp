@@ -14,7 +14,13 @@ public sealed class LocalStartupSession : IStartupSession
 
     public bool IsEnabled => true;
 
-    public void Write(string message) => _view.WriteLine(message ?? string.Empty);
+    public void Write(string message)
+    {
+        if (Volatile.Read(ref _closed) == 0)
+        {
+            _view.WriteLine(message ?? string.Empty);
+        }
+    }
 
     public void CompleteStep(string? message = null)
     {
