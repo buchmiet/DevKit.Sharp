@@ -1,19 +1,19 @@
-using DevTools.ScreenShot.Sharp;
+using DevTools.Screenshot.Sharp;
 
 namespace Sample.ViewModels;
 
 public sealed class MainWindowViewModel
 {
-    private readonly IScreenShot _screenshot;
+    private readonly IScreenshot _screenshot;
     private readonly ScreenshotOptions _options;
 
-    public MainWindowViewModel(IScreenShot screenshot, ScreenshotOptions options)
+    public MainWindowViewModel(IScreenshot screenshot, ScreenshotOptions options)
     {
         _screenshot = screenshot;
         _options = options;
     }
 
-    public string WindowTitle => "DevTools.ScreenShot Sample";
+    public string WindowTitle => "DevTools.Screenshot Sample";
 
     public string StatusText =>
         string.IsNullOrWhiteSpace(_options.OutputPath)

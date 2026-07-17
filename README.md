@@ -1,4 +1,4 @@
-# DevTools.ScreenShot
+# DevTools.Screenshot
 
 Biblioteki do robienia screenshotów głównego okna aplikacji desktopowej — pod CI, testy wizualne i dev tooling.
 
@@ -8,14 +8,14 @@ Biblioteki do robienia screenshotów głównego okna aplikacji desktopowej — p
 
 | Projekt | Opis |
 |---------|------|
-| `DevTools.ScreenShot.Sharp` | Kontrakt: `IScreenShot` |
-| `DevTools.ScreenShot.Avalonia.Sharp` | Implementacja dla Avalonia 12 |
-| `DevTools.ScreenShot.WinUi3.Sharp` | Implementacja dla WinUI 3 |
+| `DevTools.Screenshot.Sharp` | Kontrakt: `IScreenshot` |
+| `DevTools.Screenshot.Avalonia.Sharp` | Implementacja dla Avalonia 12 |
+| `DevTools.Screenshot.WinUi3.Sharp` | Implementacja dla WinUI 3 |
 
 ## API
 
 ```csharp
-public interface IScreenShot
+public interface IScreenshot
 {
     Task CaptureMainWindowAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default);
     Task CaptureMainWindowAndExitAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default);
@@ -26,15 +26,15 @@ Rejestracja DI:
 
 ```csharp
 // Avalonia
-services.AddScreenShot();
+services.AddScreenshot();
 
 // WinUI 3
-services.AddScreenShot();
+services.AddScreenshot();
 ```
 
 ### WinUI 3 — wymaganie hosta
 
-`DevTools.ScreenShot.WinUi3.Sharp` rozwiązuje główne okno przez refleksję. Na klasie `Application` musi być publiczna właściwość `MainWindow` (jak w sample `WinUi3.App`).
+`DevTools.Screenshot.WinUi3.Sharp` rozwiązuje główne okno przez refleksję. Na klasie `Application` musi być publiczna właściwość `MainWindow` (jak w sample `WinUi3.App`).
 
 ## Samples
 
@@ -69,7 +69,7 @@ dotnet run --project samples/WinUi3.App -- --screenshot artifacts/screenshots/wi
 ## Build
 
 ```powershell
-dotnet build DevTools.ScreenShot.slnx
+dotnet build DevTools.Screenshot.slnx
 ```
 
 ## Wymagania

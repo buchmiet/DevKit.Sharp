@@ -1,4 +1,4 @@
-using DevTools.ScreenShot.WinUi3.Sharp;
+using DevTools.Screenshot.WinUi3.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Sample.ViewModels;
@@ -25,7 +25,7 @@ public partial class App : Application
 
         var services = new ServiceCollection();
         services.AddSingleton(options);
-        services.AddScreenShot();
+        services.AddScreenshot();
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<ViewsMainWindow>();
         _services = services.BuildServiceProvider();

@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using DevTools.ScreenShot.Avalonia.Sharp;
+using DevTools.Screenshot.Avalonia.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.ViewModels;
 using ViewsMainWindow = Avalonia.Views.MainWindow;
@@ -21,7 +21,7 @@ public partial class App : Application
             var options = ScreenshotOptionsParser.Parse(desktop.Args ?? []);
             var services = new ServiceCollection();
             services.AddSingleton(options);
-            services.AddScreenShot();
+            services.AddScreenshot();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<ViewsMainWindow>();
             _services = services.BuildServiceProvider();

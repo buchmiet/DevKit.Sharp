@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Sample.ViewModels</RootNamespace>
-    <AssemblyName>Sample.ViewModels</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevTools.Screenshot.Sharp\DevTools.Screenshot.Sharp.csproj" />
+    <ProjectReference Include="..\..\DevTools.HostLogging.Sharp\DevTools.HostLogging.Sharp.csproj" />
   </ItemGroup>
 
 </Project>

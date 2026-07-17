@@ -11,7 +11,7 @@ Not a general logger (use Serilog/NLog at runtime). Not a splash screen.
 ```csharp
 public static void Main(string[] args)
 {
-    using var boot = Startup.Open(ref args);   // strips --HostEventLogger … from args
+    using var boot = HostLog.Open(ref args);   // strips --devtools-hostlog … from args
 
     boot.BeginProgress(4);
     boot.Write("Starting…");
@@ -24,22 +24,22 @@ public static void Main(string[] args)
 ### Command line
 
 ```text
-MyApp.exe --HostEventLogger console
-MyApp.exe --HostEventLogger file C:\temp\boot.log
+MyApp.exe --devtools-hostlog console
+MyApp.exe --devtools-hostlog file C:\temp\boot.log
 MyApp.exe                                    → logger disabled
 ```
 
 | Flag | Behaviour |
 |------|-----------|
-| `--HostEventLogger console` | Text + progress bar in a console (allocates one on Windows GUI) |
-| `--HostEventLogger file <path>` | Append-style boot log file |
+| `--devtools-hostlog console` | Text + progress bar in a console (allocates one on Windows GUI) |
+| `--devtools-hostlog file <path>` | Append-style boot log file |
 | *(none)* | `NullStartupSession` — zero overhead |
 
 ---
 
 ## Host types
 
-| Host | `--HostEventLogger console` |
+| Host | `--devtools-hostlog console` |
 |------|----------------------------|
 | Console `Exe` | log in the same terminal |
 | GUI `WinExe` | separate console window (`AllocConsole`) |
@@ -52,9 +52,9 @@ MyApp.exe                                    → logger disabled
 ## API
 
 ```csharp
-Startup.Open(ref string[] args)              // parse CLI + open session
-Startup.Open(HostLoggerLaunchOptions)      // programmatic
-Startup.Attach(string? attachName = null)    // remote runner / pipe
+HostLog.Open(ref string[] args)              // parse CLI + open session
+HostLog.Open(HostLogOptions)      // programmatic
+HostLog.Attach(string? attachName = null)    // remote runner / pipe
 
 IStartupSession
   bool IsEnabled
@@ -75,13 +75,13 @@ ConsoleHost.EnsureAttached()   // used internally for console sink
 
 | Project | Role |
 |---------|------|
-| `HostEventLauncher.Sharp` | Library |
+| `DevTools.HostLogging.Sharp` | Library |
 | `HostEventLauncher.Runner` | Optional detached-console launcher |
-| `HostEventLauncher.Sharp.Tests` | Unit tests |
+| `DevTools.HostLogging.Sharp.Tests` | Unit tests |
 
 ## Build
 
 ```bash
 dotnet build HostEventLauncher.slnx -c Release
-dotnet run --project HostEventLauncher.Sharp.Tests -c Release
+dotnet run --project DevTools.HostLogging.Sharp.Tests -c Release
 ```
