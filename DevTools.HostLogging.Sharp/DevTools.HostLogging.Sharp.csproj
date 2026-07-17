@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Startup-phase reporting for .NET hosts: timestamped boot lines and a console progress bar. Sinks: console (allocated on demand for GUI apps), file, or a detached runner process over a named pipe. Driven by --devtools-hostlog.</Description>
     <PackageTags>startup;boot;logging;console;progress-bar;diagnostics;devtools</PackageTags>

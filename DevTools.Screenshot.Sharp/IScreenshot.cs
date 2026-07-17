@@ -26,7 +26,9 @@ public static class ScreenshotCaptureExtensions
         string outputPath,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(screenshot);
+        if (screenshot is null)
+            throw new ArgumentNullException(nameof(screenshot));
+
         return screenshot.CaptureMainWindowAsync(new ScreenshotOptions { OutputPath = outputPath }, cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Framework-agnostic contract for capturing app-window screenshots: IScreenshot, ScreenshotOptions and the --devtools-screenshot CLI parser. Pair with DevTools.Screenshot.Avalonia.Sharp or DevTools.Screenshot.WinUi3.Sharp.</Description>
     <PackageTags>screenshot;capture;ui-testing;visual-testing;ci;devtools</PackageTags>

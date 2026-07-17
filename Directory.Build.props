@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
     <!-- Shippable packages opt in with <IsPackable>true</IsPackable>. -->
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
