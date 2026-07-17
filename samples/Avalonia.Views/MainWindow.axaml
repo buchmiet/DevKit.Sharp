@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:Avalonia.Views"
+        xmlns:vm="using:Sample.ViewModels"
+        x:Class="Avalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Width="900"
+        Height="560"
+        Background="#1E1E2E">
+  <DockPanel Margin="16">
+    <TextBlock DockPanel.Dock="Top"
+               Margin="0,0,0,12"
+               FontSize="18"
+               Foreground="White"
+               Text="{Binding StatusText}" />
+
+    <ItemsControl ItemsSource="{Binding Panels}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <UniformGrid Columns="3" Rows="2" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:ColorPanelViewModel">
+          <Border Margin="6"
+                  CornerRadius="12"
+                  Background="{Binding HexColor, Converter={x:Static views:HexToBrushConverter.Instance}}">
+            <TextBlock Margin="12"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                       Text="{Binding Title}" />
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </DockPanel>
+</Window>
