@@ -6,6 +6,7 @@
   <Project Path="DevTools.HostLogging.Runner/DevTools.HostLogging.Runner.csproj" />
   <Folder Name="/tests/">
     <Project Path="tests/DevTools.HostLogging.Sharp.Tests/DevTools.HostLogging.Sharp.Tests.csproj" />
+    <Project Path="tests/DevTools.Screenshot.Sharp.Tests/DevTools.Screenshot.Sharp.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/HostLogging.Sample.Console/HostLogging.Sample.Console.csproj" />

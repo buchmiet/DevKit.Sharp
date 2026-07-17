@@ -1,3 +1,4 @@
+using DevTools.Screenshot.Sharp;
 using DevTools.Screenshot.WinUi3.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -20,12 +21,13 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var options = ScreenshotOptionsParser.Parse(
-            Environment.GetCommandLineArgs().Skip(1).ToArray());
+        var cliArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+        var screenshotOptions = ScreenshotArgs.ParseAndRemove(ref cliArgs);
 
         var services = new ServiceCollection();
-        services.AddSingleton(options);
-        services.AddScreenshot();
+        services.AddSingleton(screenshotOptions);
+        services.AddScreenshot(_ => _window
+            ?? throw new InvalidOperationException("Main window has not been created yet."));
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<ViewsMainWindow>();
         _services = services.BuildServiceProvider();
@@ -37,6 +39,7 @@ public partial class App : Application
             _services = null;
             _window = null;
         };
+        _window.AttachScreenshot(screenshotOptions);
         _window.Activate();
     }
 }

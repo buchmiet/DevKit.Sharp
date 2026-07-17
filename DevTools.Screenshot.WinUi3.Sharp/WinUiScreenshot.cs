@@ -1,34 +1,45 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using DevTools.Screenshot.Sharp;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
 namespace DevTools.Screenshot.WinUi3.Sharp;
 
+/// <summary>
+/// <see cref="IScreenshot"/> implementation for WinUI 3 apps. Prefer the constructor taking a
+/// window accessor; the parameterless one falls back to resolving the main window via reflection
+/// (a public <c>MainWindow</c> property or the template's <c>m_window</c> field on <c>Application</c>).
+/// </summary>
 public sealed class WinUiScreenshot : IScreenshot
 {
-    public Task CaptureMainWindowAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default)
+    private readonly Func<Window>? _windowAccessor;
+
+    public WinUiScreenshot()
     {
-        var window = MainWindowResolver.Resolve();
-        return window.DispatcherQueue.EnqueueAsync(() =>
-            CaptureMainWindowCoreAsync(window, outputPath, delayMs, shutdownAfterCapture: false, cancellationToken));
     }
 
-    public Task CaptureMainWindowAndExitAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default)
+    public WinUiScreenshot(Func<Window> windowAccessor)
     {
-        var window = MainWindowResolver.Resolve();
-        return window.DispatcherQueue.EnqueueAsync(() =>
-            CaptureMainWindowCoreAsync(window, outputPath, delayMs, shutdownAfterCapture: true, cancellationToken));
+        _windowAccessor = windowAccessor ?? throw new ArgumentNullException(nameof(windowAccessor));
     }
 
-    private static async Task CaptureMainWindowCoreAsync(
+    public Task<ScreenshotResult> CaptureMainWindowAsync(
+        ScreenshotOptions options, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        var outputPath = options.RequireOutputPath();
+
+        var window = _windowAccessor?.Invoke() ?? MainWindowResolver.Resolve();
+        return window.DispatcherQueue.EnqueueAsync(() =>
+            CaptureCoreAsync(window, outputPath, options.Delay, cancellationToken));
+    }
+
+    internal static async Task<ScreenshotResult> CaptureCoreAsync(
         Window window,
         string outputPath,
-        int delayMs,
-        bool shutdownAfterCapture,
+        TimeSpan delay,
         CancellationToken cancellationToken)
     {
         if (window.Content is not FrameworkElement content)
@@ -36,8 +47,8 @@ public sealed class WinUiScreenshot : IScreenshot
 
         await WaitForLayoutAndRenderAsync(content, cancellationToken);
 
-        if (delayMs > 0)
-            await Task.Delay(delayMs, cancellationToken);
+        if (delay > TimeSpan.Zero)
+            await Task.Delay(delay, cancellationToken);
 
         var xamlRoot = content.XamlRoot
             ?? throw new InvalidOperationException("Main window content has no XamlRoot.");
@@ -52,8 +63,7 @@ public sealed class WinUiScreenshot : IScreenshot
         var pixels = await rtb.GetPixelsAsync();
         await SavePngAsync(outputPath, pixels, rtb.PixelWidth, rtb.PixelHeight, 96 * scale, cancellationToken);
 
-        if (shutdownAfterCapture)
-            Application.Current?.Exit();
+        return new ScreenshotResult(Path.GetFullPath(outputPath), rtb.PixelWidth, rtb.PixelHeight);
     }
 
     private static async Task WaitForLayoutAndRenderAsync(FrameworkElement content, CancellationToken cancellationToken)

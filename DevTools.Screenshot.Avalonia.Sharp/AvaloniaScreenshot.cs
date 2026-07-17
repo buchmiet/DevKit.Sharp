@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -6,39 +7,41 @@ using DevTools.Screenshot.Sharp;
 
 namespace DevTools.Screenshot.Avalonia.Sharp;
 
+/// <summary><see cref="IScreenshot"/> implementation for Avalonia desktop apps.</summary>
 public sealed class AvaloniaScreenshot : IScreenshot
 {
-    public Task CaptureMainWindowAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default)
+    public Task<ScreenshotResult> CaptureMainWindowAsync(
+        ScreenshotOptions options, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        var outputPath = options.RequireOutputPath();
+
         return Dispatcher.UIThread.InvokeAsync(() =>
-            CaptureMainWindowCoreAsync(outputPath, delayMs, shutdownAfterCapture: false, cancellationToken));
+            CaptureCoreAsync(ResolveMainWindow(), outputPath, options.Delay, cancellationToken));
     }
 
-    public Task CaptureMainWindowAndExitAsync(string outputPath, int delayMs = 0, CancellationToken cancellationToken = default)
-    {
-        return Dispatcher.UIThread.InvokeAsync(() =>
-            CaptureMainWindowCoreAsync(outputPath, delayMs, shutdownAfterCapture: true, cancellationToken));
-    }
-
-    private static async Task CaptureMainWindowCoreAsync(
-        string outputPath,
-        int delayMs,
-        bool shutdownAfterCapture,
-        CancellationToken cancellationToken)
+    internal static Window ResolveMainWindow()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             throw new InvalidOperationException("Classic desktop lifetime is required.");
 
-        var window = desktop.MainWindow
+        return desktop.MainWindow
             ?? throw new InvalidOperationException("MainWindow is null.");
+    }
 
+    internal static async Task<ScreenshotResult> CaptureCoreAsync(
+        Window window,
+        string outputPath,
+        TimeSpan delay,
+        CancellationToken cancellationToken)
+    {
         if (!window.IsVisible)
             window.Show();
 
         await WaitForLayoutAndRenderAsync(cancellationToken);
 
-        if (delayMs > 0)
-            await Task.Delay(delayMs, cancellationToken);
+        if (delay > TimeSpan.Zero)
+            await Task.Delay(delay, cancellationToken);
 
         var scale = window.RenderScaling;
         var logicalSize = window.Bounds.Size;
@@ -58,8 +61,7 @@ public sealed class AvaloniaScreenshot : IScreenshot
         bitmap.Render(window);
         bitmap.Save(outputPath);
 
-        if (shutdownAfterCapture)
-            desktop.Shutdown();
+        return new ScreenshotResult(Path.GetFullPath(outputPath), pixelSize.Width, pixelSize.Height);
     }
 
     private static async Task WaitForLayoutAndRenderAsync(CancellationToken cancellationToken)

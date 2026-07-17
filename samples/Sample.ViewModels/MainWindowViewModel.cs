@@ -4,21 +4,19 @@ namespace Sample.ViewModels;
 
 public sealed class MainWindowViewModel
 {
-    private readonly IScreenshot _screenshot;
     private readonly ScreenshotOptions _options;
 
-    public MainWindowViewModel(IScreenshot screenshot, ScreenshotOptions options)
+    public MainWindowViewModel(ScreenshotOptions options)
     {
-        _screenshot = screenshot;
         _options = options;
     }
 
     public string WindowTitle => "DevTools.Screenshot Sample";
 
     public string StatusText =>
-        string.IsNullOrWhiteSpace(_options.OutputPath)
-            ? "Run with --screenshot <path> to capture on load."
-            : $"Screenshot target: {_options.OutputPath}";
+        _options.IsEnabled
+            ? $"Screenshot target: {_options.OutputPath}"
+            : $"Run with {ScreenshotArgs.PathSwitch} <path> to capture on load.";
 
     public IReadOnlyList<ColorPanelViewModel> Panels { get; } =
     [
@@ -29,14 +27,4 @@ public sealed class MainWindowViewModel
         new("Grape", "#9B5DE5"),
         new("Peach", "#F15BB5"),
     ];
-
-    public Task OnLoadedAsync()
-    {
-        if (string.IsNullOrWhiteSpace(_options.OutputPath))
-            return Task.CompletedTask;
-
-        return _options.ExitAfterCapture
-            ? _screenshot.CaptureMainWindowAndExitAsync(_options.OutputPath, _options.DelayMs)
-            : _screenshot.CaptureMainWindowAsync(_options.OutputPath, _options.DelayMs);
-    }
 }

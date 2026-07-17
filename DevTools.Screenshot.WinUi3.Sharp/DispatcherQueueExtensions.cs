@@ -4,18 +4,17 @@ namespace DevTools.Screenshot.WinUi3.Sharp;
 
 internal static class DispatcherQueueExtensions
 {
-    public static Task EnqueueAsync(this DispatcherQueue queue, Func<Task> callback)
+    public static Task<T> EnqueueAsync<T>(this DispatcherQueue queue, Func<Task<T>> callback)
     {
         if (queue.HasThreadAccess)
             return callback();
 
-        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
         if (!queue.TryEnqueue(async () =>
         {
             try
             {
-                await callback();
-                tcs.SetResult();
+                tcs.SetResult(await callback());
             }
             catch (Exception ex)
             {
