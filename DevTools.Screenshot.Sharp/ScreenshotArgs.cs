@@ -10,6 +10,9 @@ public static class ScreenshotArgs
     /// <summary><c>--devtools-screenshot &lt;path&gt;</c> — enables capture and sets the PNG output path.</summary>
     public const string PathSwitch = "--devtools-screenshot";
 
+    /// <summary><c>--devtools-screenshot-clipboard</c> — places the capture on the system clipboard.</summary>
+    public const string ClipboardSwitch = "--devtools-screenshot-clipboard";
+
     /// <summary><c>--devtools-screenshot-exit</c> — close the app after the capture.</summary>
     public const string ExitSwitch = "--devtools-screenshot-exit";
 
@@ -18,7 +21,7 @@ public static class ScreenshotArgs
 
     /// <summary>
     /// Parses and removes the screenshot switches from <paramref name="args"/>.
-    /// Returns <see cref="ScreenshotOptions.Disabled"/>-equivalent options when no path switch is present.
+    /// Returns <see cref="ScreenshotOptions.Disabled"/>-equivalent options when no destination switch is present.
     /// Malformed switches are reported on stderr and ignored.
     /// </summary>
     public static ScreenshotOptions ParseAndRemove(ref string[] args)
@@ -30,6 +33,7 @@ public static class ScreenshotArgs
 
         var remaining = new List<string>(args.Length);
         string? outputPath = null;
+        var copyToClipboard = false;
         var exitAfterCapture = false;
         var delay = ScreenshotOptions.DefaultDelay;
 
@@ -46,6 +50,12 @@ public static class ScreenshotArgs
                 }
 
                 outputPath = args[++i];
+                continue;
+            }
+
+            if (arg.Equals(ClipboardSwitch, StringComparison.OrdinalIgnoreCase))
+            {
+                copyToClipboard = true;
                 continue;
             }
 
@@ -73,9 +83,16 @@ public static class ScreenshotArgs
 
         args = remaining.ToArray();
 
+        if (copyToClipboard && outputPath is not null)
+        {
+            Warn($"Both {PathSwitch} and {ClipboardSwitch} were specified; using the clipboard.");
+            outputPath = null;
+        }
+
         return new ScreenshotOptions
         {
             OutputPath = outputPath,
+            CopyToClipboard = copyToClipboard,
             ExitAfterCapture = exitAfterCapture,
             Delay = delay,
         };

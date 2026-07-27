@@ -26,7 +26,7 @@ public static class ScreenshotLifetimeExtensions
         var window = desktop.MainWindow
             ?? throw new InvalidOperationException(
                 "Assign desktop.MainWindow before calling AttachScreenshot.");
-        var outputPath = options.RequireOutputPath();
+        options.EnsureEnabled();
 
         if (window.IsLoaded)
         {
@@ -49,7 +49,7 @@ public static class ScreenshotLifetimeExtensions
         {
             try
             {
-                await AvaloniaScreenshot.CaptureCoreAsync(window, outputPath, options.Delay, CancellationToken.None);
+                await AvaloniaScreenshot.CaptureCoreAsync(window, options, CancellationToken.None);
 
                 if (options.ExitAfterCapture)
                     desktop.Shutdown();

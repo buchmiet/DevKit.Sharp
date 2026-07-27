@@ -19,13 +19,15 @@ public interface IScreenshot
 
 public sealed class ScreenshotOptions
 {
-    public string?  OutputPath { get; init; }          // PNG path; null => disabled
+    public string?  OutputPath { get; init; }          // PNG path
+    public bool     CopyToClipboard { get; init; }    // system clipboard instead of file
     public TimeSpan Delay { get; init; }               // settle delay, default 150 ms
     public bool     ExitAfterCapture { get; init; }    // used by AttachScreenshot hooks
     public bool     IsEnabled { get; }
 }
 
-public readonly record struct ScreenshotResult(string OutputPath, int PixelWidth, int PixelHeight);
+public readonly record struct ScreenshotResult(
+    string? OutputPath, int PixelWidth, int PixelHeight, bool CopiedToClipboard = false);
 ```
 
 ## CLI parsing
@@ -36,6 +38,7 @@ tokens from `args`, so your app never sees them:
 | Switch | Meaning |
 |--------|---------|
 | `--devtools-screenshot <path>` | enable capture, write PNG to `<path>` |
+| `--devtools-screenshot-clipboard` | enable capture, copy PNG to the system clipboard |
 | `--devtools-screenshot-exit` | close the app after the capture |
 | `--devtools-screenshot-delay <ms>` | settle delay before capture (default 150) |
 

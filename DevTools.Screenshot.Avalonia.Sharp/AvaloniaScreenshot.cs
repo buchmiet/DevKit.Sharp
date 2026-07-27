@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using DevTools.Screenshot.Sharp;
@@ -14,10 +16,10 @@ public sealed class AvaloniaScreenshot : IScreenshot
         ScreenshotOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(options);
-        var outputPath = options.RequireOutputPath();
+        options.EnsureEnabled();
 
         return Dispatcher.UIThread.InvokeAsync(() =>
-            CaptureCoreAsync(ResolveMainWindow(), outputPath, options.Delay, cancellationToken));
+            CaptureCoreAsync(ResolveMainWindow(), options, cancellationToken));
     }
 
     internal static Window ResolveMainWindow()
@@ -31,8 +33,7 @@ public sealed class AvaloniaScreenshot : IScreenshot
 
     internal static async Task<ScreenshotResult> CaptureCoreAsync(
         Window window,
-        string outputPath,
-        TimeSpan delay,
+        ScreenshotOptions options,
         CancellationToken cancellationToken)
     {
         if (!window.IsVisible)
@@ -40,8 +41,8 @@ public sealed class AvaloniaScreenshot : IScreenshot
 
         await WaitForLayoutAndRenderAsync(cancellationToken);
 
-        if (delay > TimeSpan.Zero)
-            await Task.Delay(delay, cancellationToken);
+        if (options.Delay > TimeSpan.Zero)
+            await Task.Delay(options.Delay, cancellationToken);
 
         var scale = window.RenderScaling;
         var logicalSize = window.Bounds.Size;
@@ -53,15 +54,36 @@ public sealed class AvaloniaScreenshot : IScreenshot
             throw new InvalidOperationException("Window has no measurable area to capture.");
 
         var dpi = new Vector(96 * scale, 96 * scale);
+        using var rendered = new RenderTargetBitmap(pixelSize, dpi);
+        rendered.Render(window);
+
+        if (options.CopyToClipboard)
+        {
+            await CopyToClipboardAsync(window, rendered);
+            return new ScreenshotResult(null, pixelSize.Width, pixelSize.Height, CopiedToClipboard: true);
+        }
+
+        var outputPath = options.RequireOutputPath();
         var directory = Path.GetDirectoryName(outputPath);
         if (!string.IsNullOrEmpty(directory))
             Directory.CreateDirectory(directory);
 
-        using var bitmap = new RenderTargetBitmap(pixelSize, dpi);
-        bitmap.Render(window);
-        bitmap.Save(outputPath);
-
+        rendered.Save(outputPath);
         return new ScreenshotResult(Path.GetFullPath(outputPath), pixelSize.Width, pixelSize.Height);
+    }
+
+    private static async Task CopyToClipboardAsync(Window window, RenderTargetBitmap rendered)
+    {
+        var clipboard = TopLevel.GetTopLevel(window)?.Clipboard
+            ?? throw new InvalidOperationException("System clipboard is not available.");
+
+        using var pngStream = new MemoryStream();
+        rendered.Save(pngStream);
+        pngStream.Position = 0;
+        var clipboardBitmap = new Bitmap(pngStream);
+
+        await clipboard.SetValueAsync(DataFormat.Bitmap, clipboardBitmap);
+        await clipboard.FlushAsync();
     }
 
     private static async Task WaitForLayoutAndRenderAsync(CancellationToken cancellationToken)

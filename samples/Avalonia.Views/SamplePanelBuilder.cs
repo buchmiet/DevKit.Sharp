@@ -1,20 +1,26 @@
-using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+using Avalonia.Controls;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Sample.ViewModels;
 
-namespace WinUi3.Views;
+namespace Avalonia.Views;
 
 public static class SamplePanelBuilder
 {
     public static void Populate(
-        Grid panelsGrid,
+        Panel panelsHost,
         IReadOnlyList<ColorPanelViewModel> panels,
-        Action<Border, ColorPanelViewModel> onCopyPanel,
-        Action<Border, ColorPanelViewModel> onSavePanel)
+        Func<Border, ColorPanelViewModel, Task> onCopyPanel,
+        Func<Border, ColorPanelViewModel, Task> onSavePanel)
     {
-        panelsGrid.Children.Clear();
+        panelsHost.Children.Clear();
+
+        var grid = new Grid
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            ColumnDefinitions = new ColumnDefinitions("*,*,*"),
+            RowDefinitions = new RowDefinitions("Auto,Auto"),
+        };
 
         for (var i = 0; i < panels.Count; i++)
         {
@@ -24,7 +30,7 @@ public static class SamplePanelBuilder
                 MinHeight = 120,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 CornerRadius = new CornerRadius(12),
-                Background = HexToBrushConverter.Instance.Convert(panel.HexColor, typeof(Brush), null!, string.Empty) as Brush,
+                Background = new SolidColorBrush(Color.Parse(panel.HexColor)),
                 Child = new TextBlock
                 {
                     Text = panel.Title,
@@ -32,8 +38,8 @@ public static class SamplePanelBuilder
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 20,
-                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                    Foreground = new SolidColorBrush(Colors.White),
+                    FontWeight = FontWeight.SemiBold,
+                    Foreground = Brushes.White,
                 },
             };
 
@@ -42,14 +48,14 @@ public static class SamplePanelBuilder
                 Content = panel.CopyToClipboardButtonText,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
-            copyButton.Click += (_, _) => onCopyPanel(border, panel);
+            copyButton.Click += async (_, _) => await onCopyPanel(border, panel);
 
             var saveButton = new Button
             {
                 Content = panel.SaveToFileButtonText,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
-            saveButton.Click += (_, _) => onSavePanel(border, panel);
+            saveButton.Click += async (_, _) => await onSavePanel(border, panel);
 
             var actions = new StackPanel { Spacing = 6 };
             actions.Children.Add(copyButton);
@@ -66,7 +72,9 @@ public static class SamplePanelBuilder
 
             Grid.SetColumn(cell, i % 3);
             Grid.SetRow(cell, i / 3);
-            panelsGrid.Children.Add(cell);
+            grid.Children.Add(cell);
         }
+
+        panelsHost.Children.Add(grid);
     }
 }

@@ -21,7 +21,7 @@ public static class ScreenshotWindowExtensions
         if (!options.IsEnabled)
             return window;
 
-        var outputPath = options.RequireOutputPath();
+        options.EnsureEnabled();
         var scheduled = false;
 
         window.Activated += OnActivated;
@@ -37,7 +37,7 @@ public static class ScreenshotWindowExtensions
 
             try
             {
-                await WinUiScreenshot.CaptureCoreAsync(window, outputPath, options.Delay, CancellationToken.None);
+                await WinUiScreenshot.CaptureCoreAsync(window, options, CancellationToken.None);
 
                 if (options.ExitAfterCapture)
                     Application.Current.Exit();

@@ -21,6 +21,7 @@ Run your app:
 
 ```text
 MyApp.exe --devtools-screenshot artifacts/shot.png --devtools-screenshot-exit --devtools-screenshot-delay 500
+MyApp.exe --devtools-screenshot-clipboard --devtools-screenshot-exit
 ```
 
 The window activates, renders, waits the settle delay, saves the PNG and (with `-exit`) exits.
@@ -39,6 +40,8 @@ services.AddScreenshot(_ => _window!);
 services.AddScreenshot();
 
 var result = await screenshot.CaptureMainWindowAsync("shot.png");
+
+await screenshot.CaptureMainWindowToClipboardAsync();
 ```
 
 Part of the [DevTools.Sharp](https://github.com/buchmiet/DevTools.Sharp) family. MIT licensed.

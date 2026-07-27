@@ -15,8 +15,10 @@ public sealed class MainWindowViewModel
 
     public string StatusText =>
         _options.IsEnabled
-            ? $"Screenshot target: {_options.OutputPath}"
-            : $"Run with {ScreenshotArgs.PathSwitch} <path> to capture on load.";
+            ? _options.CopyToClipboard
+                ? "Screenshot target: system clipboard"
+                : $"Screenshot target: {_options.OutputPath}"
+            : $"Run with {ScreenshotArgs.PathSwitch} <path> or {ScreenshotArgs.ClipboardSwitch} to capture on load.";
 
     public IReadOnlyList<ColorPanelViewModel> Panels { get; } =
     [

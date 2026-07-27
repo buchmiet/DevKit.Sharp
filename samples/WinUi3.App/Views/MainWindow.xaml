@@ -8,17 +8,69 @@
     <Grid x:Name="RootGrid"
           Background="#1E1E2E"
           Padding="16"
+          ColumnDefinitions="*,300"
           RowDefinitions="Auto,*">
         <TextBlock x:Name="StatusText"
                    Grid.Row="0"
+                   Grid.ColumnSpan="2"
                    Margin="0,0,0,12"
                    FontSize="18"
                    Foreground="White"
                    TextWrapping="Wrap" />
 
-        <Grid x:Name="PanelsGrid"
-              Grid.Row="1"
-              ColumnDefinitions="*,*,*"
-              RowDefinitions="*,*" />
+        <Grid Grid.Row="1"
+              Grid.Column="0"
+              RowDefinitions="*,Auto">
+            <Grid x:Name="PanelsGrid"
+                  Grid.Row="0"
+                  ColumnDefinitions="*,*,*"
+                  RowDefinitions="*,*" />
+
+            <StackPanel Grid.Row="1"
+                        Margin="6,12,6,0"
+                        Spacing="6">
+                <Button Content="Copy main window to clipboard"
+                        HorizontalAlignment="Stretch"
+                        Click="OnCopyMainWindowClick" />
+                <Button Content="Save main window to file…"
+                        HorizontalAlignment="Stretch"
+                        Click="OnSaveMainWindowClick" />
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Margin="12,0,0,0"
+                Padding="12"
+                CornerRadius="12"
+                Background="#2A2A3C">
+            <StackPanel Spacing="10">
+                <TextBlock FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Text="Clipboard preview" />
+
+                <Button x:Name="PasteFromClipboardButton"
+                        Content="Paste from clipboard"
+                        HorizontalAlignment="Stretch"
+                        Click="OnPasteFromClipboardClick" />
+
+                <Border MinHeight="220"
+                        Padding="8"
+                        CornerRadius="8"
+                        Background="#1E1E2E">
+                    <Image x:Name="ClipboardPreviewImage"
+                           Stretch="Uniform"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+                </Border>
+
+                <TextBlock x:Name="ClipboardPreviewStatus"
+                           FontSize="13"
+                           Foreground="#B0B0C0"
+                           TextWrapping="Wrap"
+                           Text="Copy or save a capture, then verify the image here." />
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

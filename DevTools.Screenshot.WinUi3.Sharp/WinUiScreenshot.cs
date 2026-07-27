@@ -2,6 +2,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using DevTools.Screenshot.Sharp;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
@@ -29,17 +30,16 @@ public sealed class WinUiScreenshot : IScreenshot
         ScreenshotOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(options);
-        var outputPath = options.RequireOutputPath();
+        options.EnsureEnabled();
 
         var window = _windowAccessor?.Invoke() ?? MainWindowResolver.Resolve();
         return window.DispatcherQueue.EnqueueAsync(() =>
-            CaptureCoreAsync(window, outputPath, options.Delay, cancellationToken));
+            CaptureCoreAsync(window, options, cancellationToken));
     }
 
     internal static async Task<ScreenshotResult> CaptureCoreAsync(
         Window window,
-        string outputPath,
-        TimeSpan delay,
+        ScreenshotOptions options,
         CancellationToken cancellationToken)
     {
         if (window.Content is not FrameworkElement content)
@@ -47,8 +47,8 @@ public sealed class WinUiScreenshot : IScreenshot
 
         await WaitForLayoutAndRenderAsync(content, cancellationToken);
 
-        if (delay > TimeSpan.Zero)
-            await Task.Delay(delay, cancellationToken);
+        if (options.Delay > TimeSpan.Zero)
+            await Task.Delay(options.Delay, cancellationToken);
 
         var xamlRoot = content.XamlRoot
             ?? throw new InvalidOperationException("Main window content has no XamlRoot.");
@@ -61,8 +61,14 @@ public sealed class WinUiScreenshot : IScreenshot
         await rtb.RenderAsync(content);
 
         var pixels = await rtb.GetPixelsAsync();
-        await SavePngAsync(outputPath, pixels, rtb.PixelWidth, rtb.PixelHeight, 96 * scale, cancellationToken);
+        if (options.CopyToClipboard)
+        {
+            await CopyToClipboardAsync(pixels, rtb.PixelWidth, rtb.PixelHeight, 96 * scale, cancellationToken);
+            return new ScreenshotResult(null, rtb.PixelWidth, rtb.PixelHeight, CopiedToClipboard: true);
+        }
 
+        var outputPath = options.RequireOutputPath();
+        await SavePngAsync(outputPath, pixels, rtb.PixelWidth, rtb.PixelHeight, 96 * scale, cancellationToken);
         return new ScreenshotResult(Path.GetFullPath(outputPath), rtb.PixelWidth, rtb.PixelHeight);
     }
 
@@ -87,6 +93,25 @@ public sealed class WinUiScreenshot : IScreenshot
         throw new InvalidOperationException("Timed out waiting for the main window to become ready for capture.");
     }
 
+    private static async Task CopyToClipboardAsync(
+        IBuffer pixels,
+        int width,
+        int height,
+        double dpi,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var stream = new InMemoryRandomAccessStream();
+        await EncodePngAsync(stream, pixels, width, height, dpi, cancellationToken);
+
+        stream.Seek(0);
+        var reference = RandomAccessStreamReference.CreateFromStream(stream);
+        var package = new DataPackage();
+        package.SetBitmap(reference);
+        Clipboard.SetContent(package);
+    }
+
     private static async Task SavePngAsync(
         string outputPath,
         IBuffer pixels,
@@ -102,7 +127,20 @@ public sealed class WinUiScreenshot : IScreenshot
             Directory.CreateDirectory(directory);
 
         using var stream = File.Create(outputPath);
-        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream.AsRandomAccessStream());
+        await EncodePngAsync(stream.AsRandomAccessStream(), pixels, width, height, dpi, cancellationToken);
+    }
+
+    private static async Task EncodePngAsync(
+        IRandomAccessStream stream,
+        IBuffer pixels,
+        int width,
+        int height,
+        double dpi,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
         encoder.SetPixelData(
             BitmapPixelFormat.Bgra8,
             BitmapAlphaMode.Premultiplied,
