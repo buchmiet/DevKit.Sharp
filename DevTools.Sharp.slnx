@@ -1,0 +1,20 @@
+<Solution>
+  <Project Path="DevTools.Screenshot.Sharp/DevTools.Screenshot.Sharp.csproj" />
+  <Project Path="DevTools.Screenshot.Avalonia.Sharp/DevTools.Screenshot.Avalonia.Sharp.csproj" />
+  <Project Path="DevTools.Screenshot.WinUi3.Sharp/DevTools.Screenshot.WinUi3.Sharp.csproj" />
+  <Project Path="DevTools.HostLogging.Sharp/DevTools.HostLogging.Sharp.csproj" />
+  <Project Path="DevTools.HostLogging.Runner/DevTools.HostLogging.Runner.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/DevTools.HostLogging.Sharp.Tests/DevTools.HostLogging.Sharp.Tests.csproj" />
+    <Project Path="tests/DevTools.Screenshot.Sharp.Tests/DevTools.Screenshot.Sharp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/HostLogging.Sample.Console/HostLogging.Sample.Console.csproj" />
+    <Project Path="samples/HostLogging.Sample.Gui/HostLogging.Sample.Gui.csproj" />
+    <Project Path="samples/Sample.ViewModels/Sample.ViewModels.csproj" />
+    <Project Path="samples/Avalonia.Views/Avalonia.Views.csproj" />
+    <Project Path="samples/Avalonia.App/Avalonia.App.csproj" />
+    <Project Path="samples/WinUi3.Views/WinUi3.Views.csproj" />
+    <Project Path="samples/WinUi3.App/WinUi3.App.csproj" />
+  </Folder>
+</Solution>
