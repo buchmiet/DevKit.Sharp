@@ -85,6 +85,59 @@ dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages
 - [ ] Boundary check, Release build, tests, pack — all green
 - [ ] Commit message references `Closes #1`
 
+## Round 1 review outcome (for context)
+
+Commit `0b95142` delivered all round-1 tasks; boundary check, Release build, both test projects and `dotnet pack` verified green by the reviewer. Two pre-existing concerns from the initial audit were deliberately deferred to round 2 below. Minor nit noted during review (fix opportunistically in round 2): `ElementScreenshotCapture.cs` has an unused `using Microsoft.UI.Xaml.Controls;`.
+
+## Round 2 — follow-up tasks
+
+Separate concern from issue #1: land as its **own commit**, do not amend `0b95142`.
+
+### A. Enable SourceLink for the published packages
+
+Audit finding: `Directory.Build.props` sets `PublishRepositoryUrl`, `EmbedUntrackedSources` and ships `.snupkg` symbols, but **SourceLink is not active** — verified empirically: the PDBs inside `DevKit.Screenshot.Avalonia.Sharp.0.1.1.snupkg` contain no `sourcelink` document. Consumers cannot step into package source while debugging. (The .NET SDK ships the SourceLink tasks since .NET 8 but does **not** auto-reference them — the package reference is still required.)
+
+1. In `Directory.Build.props`, extend the existing `IsPackable` item group:
+
+   ```xml
+   <ItemGroup Condition="'$(IsPackable)' == 'true'">
+     <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="\" />
+     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="all" />
+   </ItemGroup>
+   ```
+
+2. In the same property group, add deterministic CI paths:
+
+   ```xml
+   <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+   ```
+
+   (GitHub Actions sets `CI=true`; local dev builds stay non-deterministic-path, which is fine.)
+
+3. Verify empirically — pack and inspect a PDB:
+
+   ```powershell
+   dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages
+   Expand-Archive artifacts/packages/DevKit.Screenshot.Avalonia.Sharp.0.1.1.snupkg -DestinationPath $env:TEMP/snupkg-check -Force
+   dotnet tool install sourcelink --tool-path $env:TEMP/dotnet-tools
+   & $env:TEMP/dotnet-tools/sourcelink.exe print-urls (Get-ChildItem $env:TEMP/snupkg-check -Recurse -Filter *.pdb | Select-Object -First 1).FullName
+   # URLs must point at raw.githubusercontent.com/buchmiet/DevKit.Sharp/<commit>/...
+   # (Portable PDBs store SourceLink as a binary blob — a plain UTF-8 search for 'sourcelink' is a false negative.)
+   ```
+
+   No csproj changes; no new package dependency reaches consumers (`PrivateAssets="all"`).
+
+### B. Move private infrastructure out of the public README
+
+Audit finding: the root `README.md` section **"Local publish (HSM on Cray)"** documents private homelab infrastructure (HSM paths, profile names) in a public open-source repo — noise for contributors and needless exposure. It was also swept into the `0b95142` feature commit, mixing concerns.
+
+1. Delete the entire "Local publish (HSM on Cray)" section from the root `README.md` (from the `### Local publish` heading up to but not including `## Requirements`). Move the instructions to private notes outside the repo.
+2. `eng/push-packages.ps1` is currently **untracked** — keep it that way and add it to `.gitignore` (`eng/push-packages.ps1`) so the private publish script can never leak into the public repo accidentally.
+
+### Round 2 verification
+
+Same suite as below (boundary check, Release build, both test projects, pack) plus the SourceLink PDB assertion from A.3. Round-2 commit message: e.g. `Enable SourceLink and drop private publish notes.` — no issue reference needed.
+
 ## Style notes for this repo
 
 - C# latest, nullable on, implicit usings; file-scoped namespaces; expression-bodied members where natural.

@@ -89,16 +89,6 @@ git push origin v0.1.0
 
 Set the `NUGET_API_KEY` secret in the GitHub `nuget` environment before the first publish.
 
-### Local publish (HSM on Cray)
-
-CI uses GitHub Actions secrets. For a manual push from Cray, store the key in homelab HSM at
-`/devkit/nuget` (`NUGET_API_KEY`) and run:
-
-```powershell
-dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages -p:Version=0.1.1
-hsm run --profile runbook-cray --quiet -- powershell.exe -NoProfile -File eng/push-packages.ps1
-```
-
 ## Requirements
 
 - .NET SDK 10 to build the repo; packages target `netstandard2.0`/`net8.0`/`net10.0`
