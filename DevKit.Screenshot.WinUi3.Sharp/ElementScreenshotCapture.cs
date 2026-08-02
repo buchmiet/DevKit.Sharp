@@ -3,18 +3,28 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 
-namespace WinUi3.Views;
+namespace DevKit.Screenshot.WinUi3.Sharp;
 
+/// <summary>
+/// Captures an arbitrary <see cref="FrameworkElement"/> to PNG bytes, a file, or the system clipboard.
+/// Use <see cref="WinUiScreenshot"/> or <see cref="DevKit.Screenshot.Sharp.IScreenshot"/> for the main window.
+/// </summary>
 public static class ElementScreenshotCapture
 {
-    public static async Task<(int Width, int Height, byte[] PngBytes)> CapturePngAsync(FrameworkElement element)
+    /// <summary>Renders <paramref name="element"/> and returns PNG bytes with the pixel dimensions.</summary>
+    public static async Task<(int Width, int Height, byte[] PngBytes)> CapturePngAsync(
+        FrameworkElement element,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(element);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
         element.UpdateLayout();
 
         var xamlRoot = element.XamlRoot
@@ -26,11 +36,13 @@ public static class ElementScreenshotCapture
         var rtb = new RenderTargetBitmap();
         await rtb.RenderAsync(element);
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         var pixels = await rtb.GetPixelsAsync();
         var dpi = 96 * xamlRoot.RasterizationScale;
 
         using var stream = new InMemoryRandomAccessStream();
-        await EncodePngAsync(stream, pixels, rtb.PixelWidth, rtb.PixelHeight, dpi);
+        await PngEncoder.EncodeAsync(stream, pixels, rtb.PixelWidth, rtb.PixelHeight, dpi, cancellationToken);
 
         stream.Seek(0);
         var pngBytes = new byte[stream.Size];
@@ -39,9 +51,14 @@ public static class ElementScreenshotCapture
         return (rtb.PixelWidth, rtb.PixelHeight, pngBytes);
     }
 
-    public static async Task<(int Width, int Height)> CopyToClipboardAsync(FrameworkElement element)
+    /// <summary>Renders <paramref name="element"/> and copies the result to the clipboard.</summary>
+    public static async Task<(int Width, int Height)> CopyToClipboardAsync(
+        FrameworkElement element,
+        CancellationToken cancellationToken = default)
     {
-        var (width, height, pngBytes) = await CapturePngAsync(element);
+        var (width, height, pngBytes) = await CapturePngAsync(element, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         using var clipboardStream = new InMemoryRandomAccessStream();
         await clipboardStream.WriteAsync(pngBytes.AsBuffer());
@@ -54,12 +71,19 @@ public static class ElementScreenshotCapture
         return (width, height);
     }
 
+    /// <summary>Renders <paramref name="element"/> and writes a PNG after the user picks a path.</summary>
     public static async Task<(string Path, BitmapImage Preview)?> SaveToFileAsync(
         Window window,
         FrameworkElement element,
-        string suggestedFileName)
+        string suggestedFileName,
+        CancellationToken cancellationToken = default)
     {
-        var (width, height, pngBytes) = await CapturePngAsync(element);
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(element);
+
+        var (_, _, pngBytes) = await CapturePngAsync(element, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var picker = new FileSavePicker
         {
@@ -76,6 +100,8 @@ public static class ElementScreenshotCapture
         if (file is null)
             return null;
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         await FileIO.WriteBytesAsync(file, pngBytes);
 
         using var previewStream = new InMemoryRandomAccessStream();
@@ -86,24 +112,5 @@ public static class ElementScreenshotCapture
         await preview.SetSourceAsync(previewStream);
 
         return (file.Path, preview);
-    }
-
-    private static async Task EncodePngAsync(
-        IRandomAccessStream stream,
-        IBuffer pixels,
-        int width,
-        int height,
-        double dpi)
-    {
-        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-        encoder.SetPixelData(
-            BitmapPixelFormat.Bgra8,
-            BitmapAlphaMode.Premultiplied,
-            (uint)width,
-            (uint)height,
-            dpi,
-            dpi,
-            pixels.ToArray());
-        await encoder.FlushAsync();
     }
 }

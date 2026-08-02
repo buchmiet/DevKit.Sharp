@@ -51,4 +51,11 @@ await screenshot.CaptureMainWindowToClipboardAsync();
 // result.CopiedToClipboard == true
 ```
 
+### Capture a subtree (panel, terminal surface, …)
+
+```csharp
+await VisualScreenshotCapture.CopyToClipboardAsync(myBorder);
+var bitmap = await VisualScreenshotCapture.CaptureAsync(myBorder);
+```
+
 Part of the [DevKit.Sharp](https://github.com/buchmiet/DevKit.Sharp) family. MIT licensed.

@@ -7,8 +7,8 @@ Small, focused dev-tooling packages for .NET desktop apps. Each ships as a separ
 | Package | What it does | Install |
 |---------|--------------|---------|
 | [DevKit.Screenshot.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Sharp) | Contract + `--devkit-screenshot` CLI parser | `dotnet add package DevKit.Screenshot.Sharp` |
-| [DevKit.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Avalonia.Sharp) | Main-window capture for Avalonia 12 | `dotnet add package DevKit.Screenshot.Avalonia.Sharp` |
-| [DevKit.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.WinUi3.Sharp) | Main-window capture for WinUI 3 | `dotnet add package DevKit.Screenshot.WinUi3.Sharp` |
+| [DevKit.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Avalonia.Sharp) | Main-window + element capture for Avalonia 12 | `dotnet add package DevKit.Screenshot.Avalonia.Sharp` |
+| [DevKit.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.WinUi3.Sharp) | Main-window + element capture for WinUI 3 | `dotnet add package DevKit.Screenshot.WinUi3.Sharp` |
 | [DevKit.Logging.Sharp](https://www.nuget.org/packages/DevKit.Logging.Sharp) | Startup-phase reporter: boot lines + console progress bar | `dotnet add package DevKit.Logging.Sharp` |
 
 > **Versioning:** `0.1.0` is the first public release under the DevKit name.
@@ -88,6 +88,16 @@ git push origin v0.1.0
 ```
 
 Set the `NUGET_API_KEY` secret in the GitHub `nuget` environment before the first publish.
+
+### Local publish (HSM on Cray)
+
+CI uses GitHub Actions secrets. For a manual push from Cray, store the key in homelab HSM at
+`/devkit/nuget` (`NUGET_API_KEY`) and run:
+
+```powershell
+dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages -p:Version=0.1.1
+hsm run --profile runbook-cray --quiet -- powershell.exe -NoProfile -File eng/push-packages.ps1
+```
 
 ## Requirements
 

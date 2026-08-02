@@ -44,4 +44,11 @@ var result = await screenshot.CaptureMainWindowAsync("shot.png");
 await screenshot.CaptureMainWindowToClipboardAsync();
 ```
 
+### Capture an element (panel, terminal surface, …)
+
+```csharp
+var (width, height, pngBytes) = await ElementScreenshotCapture.CapturePngAsync(myBorder);
+await ElementScreenshotCapture.CopyToClipboardAsync(myBorder);
+```
+
 Part of the [DevKit.Sharp](https://github.com/buchmiet/DevKit.Sharp) family. MIT licensed.

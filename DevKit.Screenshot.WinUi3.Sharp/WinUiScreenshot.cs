@@ -1,9 +1,7 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using DevKit.Screenshot.Sharp;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
 namespace DevKit.Screenshot.WinUi3.Sharp;
@@ -103,7 +101,7 @@ public sealed class WinUiScreenshot : IScreenshot
         cancellationToken.ThrowIfCancellationRequested();
 
         using var stream = new InMemoryRandomAccessStream();
-        await EncodePngAsync(stream, pixels, width, height, dpi, cancellationToken);
+        await PngEncoder.EncodeAsync(stream, pixels, width, height, dpi, cancellationToken);
 
         stream.Seek(0);
         var reference = RandomAccessStreamReference.CreateFromStream(stream);
@@ -127,28 +125,6 @@ public sealed class WinUiScreenshot : IScreenshot
             Directory.CreateDirectory(directory);
 
         using var stream = File.Create(outputPath);
-        await EncodePngAsync(stream.AsRandomAccessStream(), pixels, width, height, dpi, cancellationToken);
-    }
-
-    private static async Task EncodePngAsync(
-        IRandomAccessStream stream,
-        IBuffer pixels,
-        int width,
-        int height,
-        double dpi,
-        CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-        encoder.SetPixelData(
-            BitmapPixelFormat.Bgra8,
-            BitmapAlphaMode.Premultiplied,
-            (uint)width,
-            (uint)height,
-            dpi,
-            dpi,
-            pixels.ToArray());
-        await encoder.FlushAsync();
+        await PngEncoder.EncodeAsync(stream.AsRandomAccessStream(), pixels, width, height, dpi, cancellationToken);
     }
 }

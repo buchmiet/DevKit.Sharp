@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
-    <Description>Main-window screenshot capture for Avalonia apps: AttachScreenshot one-liner for CI captures driven by --devkit-screenshot, plus IScreenshot for programmatic use.</Description>
+    <Description>Main-window screenshot capture for Avalonia apps: AttachScreenshot one-liner for CI captures driven by --devkit-screenshot, plus IScreenshot and VisualScreenshotCapture for arbitrary elements.</Description>
     <PackageTags>screenshot;capture;avalonia;ui-testing;visual-testing;ci;devkit</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
