@@ -44,7 +44,7 @@ jobs:
         run: python eng/verify-contract-boundary.py
 
       - name: Pack
-        run: dotnet pack DevTools.Sharp.slnx -c Release -o artifacts/packages -p:Version=${{ steps.version.outputs.value }}
+        run: dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages -p:Version=${{ steps.version.outputs.value }}
 
       - name: Publish to NuGet.org
         shell: bash

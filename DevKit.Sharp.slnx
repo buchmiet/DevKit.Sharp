@@ -1,0 +1,20 @@
+<Solution>
+  <Project Path="DevKit.Screenshot.Sharp/DevKit.Screenshot.Sharp.csproj" />
+  <Project Path="DevKit.Screenshot.Avalonia.Sharp/DevKit.Screenshot.Avalonia.Sharp.csproj" />
+  <Project Path="DevKit.Screenshot.WinUi3.Sharp/DevKit.Screenshot.WinUi3.Sharp.csproj" />
+  <Project Path="DevKit.Logging.Sharp/DevKit.Logging.Sharp.csproj" />
+  <Project Path="DevKit.Logging.Runner/DevKit.Logging.Runner.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/DevKit.Logging.Sharp.Tests/DevKit.Logging.Sharp.Tests.csproj" />
+    <Project Path="tests/DevKit.Screenshot.Sharp.Tests/DevKit.Screenshot.Sharp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Logging.Sample.Console/Logging.Sample.Console.csproj" />
+    <Project Path="samples/Logging.Sample.Gui/Logging.Sample.Gui.csproj" />
+    <Project Path="samples/Sample.ViewModels/Sample.ViewModels.csproj" />
+    <Project Path="samples/Avalonia.Views/Avalonia.Views.csproj" />
+    <Project Path="samples/Avalonia.App/Avalonia.App.csproj" />
+    <Project Path="samples/WinUi3.Views/WinUi3.Views.csproj" />
+    <Project Path="samples/WinUi3.App/WinUi3.App.csproj" />
+  </Folder>
+</Solution>

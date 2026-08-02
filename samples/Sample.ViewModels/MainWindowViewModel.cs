@@ -1,4 +1,4 @@
-using DevTools.Screenshot.Sharp;
+using DevKit.Screenshot.Sharp;
 
 namespace Sample.ViewModels;
 
@@ -11,7 +11,7 @@ public sealed class MainWindowViewModel
         _options = options;
     }
 
-    public string WindowTitle => "DevTools.Screenshot Sample";
+    public string WindowTitle => "DevKit.Screenshot Sample";
 
     public string StatusText =>
         _options.IsEnabled

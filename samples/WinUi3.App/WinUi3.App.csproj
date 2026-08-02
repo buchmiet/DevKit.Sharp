@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevTools.Screenshot.WinUi3.Sharp\DevTools.Screenshot.WinUi3.Sharp.csproj" />
+    <ProjectReference Include="..\..\DevKit.Screenshot.WinUi3.Sharp\DevKit.Screenshot.WinUi3.Sharp.csproj" />
     <ProjectReference Include="..\Sample.ViewModels\Sample.ViewModels.csproj" />
     <ProjectReference Include="..\WinUi3.Views\WinUi3.Views.csproj" />
   </ItemGroup>

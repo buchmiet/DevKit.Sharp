@@ -1,4 +1,4 @@
-# DevTools.Sharp
+# DevKit.Sharp
 
 Small, focused dev-tooling packages for .NET desktop apps. Each ships as a separate NuGet package.
 
@@ -6,17 +6,17 @@ Small, focused dev-tooling packages for .NET desktop apps. Each ships as a separ
 
 | Package | What it does | Install |
 |---------|--------------|---------|
-| [DevTools.Screenshot.Sharp](https://www.nuget.org/packages/DevTools.Screenshot.Sharp) | Contract + `--devtools-screenshot` CLI parser | `dotnet add package DevTools.Screenshot.Sharp` |
-| [DevTools.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevTools.Screenshot.Avalonia.Sharp) | Main-window capture for Avalonia 12 | `dotnet add package DevTools.Screenshot.Avalonia.Sharp` |
-| [DevTools.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevTools.Screenshot.WinUi3.Sharp) | Main-window capture for WinUI 3 | `dotnet add package DevTools.Screenshot.WinUi3.Sharp` |
-| [DevTools.HostLogging.Sharp](https://www.nuget.org/packages/DevTools.HostLogging.Sharp) | Startup-phase reporter: boot lines + console progress bar | `dotnet add package DevTools.HostLogging.Sharp` |
+| [DevKit.Screenshot.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Sharp) | Contract + `--devkit-screenshot` CLI parser | `dotnet add package DevKit.Screenshot.Sharp` |
+| [DevKit.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Avalonia.Sharp) | Main-window capture for Avalonia 12 | `dotnet add package DevKit.Screenshot.Avalonia.Sharp` |
+| [DevKit.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.WinUi3.Sharp) | Main-window capture for WinUI 3 | `dotnet add package DevKit.Screenshot.WinUi3.Sharp` |
+| [DevKit.Logging.Sharp](https://www.nuget.org/packages/DevKit.Logging.Sharp) | Startup-phase reporter: boot lines + console progress bar | `dotnet add package DevKit.Logging.Sharp` |
 
-> **Versioning:** `0.0.1` is the first public release.
+> **Versioning:** `0.1.0` is the first public release under the DevKit name.
 
 ## Design
 
 One convention across the family: every tool is driven by a namespaced CLI switch
-(`--devtools-screenshot…`, `--devtools-hostlog…`), parsed with a `ParseAndRemove(ref args)`
+(`--devkit-screenshot…`, `--devkit-logging…`), parsed with a `ParseAndRemove(ref args)`
 helper that strips its tokens before your app sees them. With no switch present every hook is a
 no-op, so the wiring can ship in production code.
 
@@ -38,9 +38,9 @@ using var boot = HostLog.Open(ref args);
 Same CLI, same behaviour, no view-model changes:
 
 ```text
-MyApp.exe --devtools-screenshot artifacts/shot.png --devtools-screenshot-exit
-MyApp.exe --devtools-screenshot-clipboard --devtools-screenshot-exit
-MyApp.exe --devtools-hostlog console
+MyApp.exe --devkit-screenshot artifacts/shot.png --devkit-screenshot-exit
+MyApp.exe --devkit-screenshot-clipboard --devkit-screenshot-exit
+MyApp.exe --devkit-logging console
 ```
 
 ## Development
@@ -49,32 +49,32 @@ Requirements: .NET 10 SDK, Python 3 (for the boundary check).
 
 ```powershell
 python eng/verify-contract-boundary.py
-dotnet build DevTools.Sharp.slnx -c Release
-dotnet run --project tests/DevTools.HostLogging.Sharp.Tests -c Release
-dotnet run --project tests/DevTools.Screenshot.Sharp.Tests -c Release
+dotnet build DevKit.Sharp.slnx -c Release
+dotnet run --project tests/DevKit.Logging.Sharp.Tests -c Release
+dotnet run --project tests/DevKit.Screenshot.Sharp.Tests -c Release
 ```
 
 ### Local package build
 
 ```powershell
-dotnet pack DevTools.Sharp.slnx -c Release -o artifacts/packages
+dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages
 ```
 
-The default local version is `0.0.1` (see `Directory.Build.props`). Override for a dry run:
+The default local version is `0.1.0` (see `Directory.Build.props`). Override for a dry run:
 
 ```powershell
-dotnet pack DevTools.Sharp.slnx -c Release -o artifacts/packages -p:Version=0.0.2
+dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages -p:Version=0.1.1
 ```
 
 ## Samples
 
 `samples/` contains twin Avalonia and WinUI 3 apps sharing one view-model project, plus
-console/GUI hosts for HostLogging:
+console/GUI hosts for Logging:
 
 ```powershell
-dotnet run --project samples/Avalonia.App -- --devtools-screenshot artifacts/screenshots/avalonia.png --devtools-screenshot-exit
-dotnet run --project samples/WinUi3.App -- --devtools-screenshot artifacts/screenshots/winui3.png --devtools-screenshot-exit
-dotnet run --project samples/HostLogging.Sample.Console -- --devtools-hostlog console
+dotnet run --project samples/Avalonia.App -- --devkit-screenshot artifacts/screenshots/avalonia.png --devkit-screenshot-exit
+dotnet run --project samples/WinUi3.App -- --devkit-screenshot artifacts/screenshots/winui3.png --devkit-screenshot-exit
+dotnet run --project samples/Logging.Sample.Console -- --devkit-logging console
 ```
 
 ## Publishing
@@ -83,8 +83,8 @@ CI runs on every push and pull request to `main`. Packages are published to NuGe
 version tag is pushed:
 
 ```text
-git tag v0.0.1
-git push origin v0.0.1
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 Set the `NUGET_API_KEY` secret in the GitHub `nuget` environment before the first publish.

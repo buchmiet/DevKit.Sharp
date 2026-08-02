@@ -4,7 +4,7 @@ using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
-using DevTools.Screenshot.Sharp;
+using DevKit.Screenshot.Sharp;
 using Sample.ViewModels;
 
 namespace Avalonia.Views;

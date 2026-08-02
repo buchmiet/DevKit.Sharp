@@ -8,15 +8,15 @@
     <!-- Shippable packages opt in with <IsPackable>true</IsPackable>. -->
     <IsPackable>false</IsPackable>
 
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
 
     <Authors>Lukasz Buchmiet</Authors>
     <Copyright>Copyright (c) 2026 Lukasz Buchmiet</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/buchmiet/DevTools.Sharp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/buchmiet/DevTools.Sharp.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/buchmiet/DevKit.Sharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/buchmiet/DevKit.Sharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 

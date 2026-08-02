@@ -3,7 +3,7 @@
     x:Class="WinUi3.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="DevTools.Screenshot Sample">
+    Title="DevKit.Screenshot Sample">
 
     <Grid x:Name="RootGrid"
           Background="#1E1E2E"

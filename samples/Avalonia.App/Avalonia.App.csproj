@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevTools.Screenshot.Avalonia.Sharp\DevTools.Screenshot.Avalonia.Sharp.csproj" />
+    <ProjectReference Include="..\..\DevKit.Screenshot.Avalonia.Sharp\DevKit.Screenshot.Avalonia.Sharp.csproj" />
     <ProjectReference Include="..\Avalonia.Views\Avalonia.Views.csproj" />
     <ProjectReference Include="..\Sample.ViewModels\Sample.ViewModels.csproj" />
   </ItemGroup>

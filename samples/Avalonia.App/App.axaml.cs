@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using DevTools.Screenshot.Avalonia.Sharp;
-using DevTools.Screenshot.Sharp;
+using DevKit.Screenshot.Avalonia.Sharp;
+using DevKit.Screenshot.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.ViewModels;
 using ViewsMainWindow = Avalonia.Views.MainWindow;

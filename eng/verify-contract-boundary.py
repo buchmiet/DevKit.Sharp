@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fails when platform/framework concepts leak into DevTools contract assemblies."""
+"""Fails when platform/framework concepts leak into DevKit contract assemblies."""
 
 from pathlib import Path
 import sys
@@ -7,8 +7,8 @@ import xml.etree.ElementTree as ET
 
 root = Path(__file__).resolve().parents[1]
 
-strict_contract_dirs = ("DevTools.Screenshot.Sharp",)
-dependency_only_contract_dirs = ("DevTools.HostLogging.Sharp",)
+strict_contract_dirs = ("DevKit.Screenshot.Sharp",)
+dependency_only_contract_dirs = ("DevKit.Logging.Sharp",)
 
 forbidden_tokens = (
     "Avalonia",

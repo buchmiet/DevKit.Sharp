@@ -1,5 +1,5 @@
-using DevTools.Screenshot.Sharp;
-using DevTools.Screenshot.WinUi3.Sharp;
+using DevKit.Screenshot.Sharp;
+using DevKit.Screenshot.WinUi3.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Sample.ViewModels;
