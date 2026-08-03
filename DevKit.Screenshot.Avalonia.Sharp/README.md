@@ -58,4 +58,9 @@ await VisualScreenshotCapture.CopyToClipboardAsync(myBorder);
 var bitmap = await VisualScreenshotCapture.CaptureAsync(myBorder);
 ```
 
+Subtree capture flattens transparency by default so clipboard and file consumers that do not
+composite PNG alpha still show content. Opt out with
+`new VisualCaptureOptions { FlattenTransparency = false }` or supply an explicit
+`Background` brush.
+
 Part of the [DevKit.Sharp](https://github.com/buchmiet/DevKit.Sharp) family. MIT licensed.

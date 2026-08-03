@@ -11,7 +11,7 @@
   <ItemGroup>
     <!-- Lifetime types live in Avalonia.Controls; the app brings its own platform head
          (Avalonia.Desktop), so the library must not force it on consumers. -->
-    <PackageReference Include="Avalonia" Version="12.0.0" />
+    <PackageReference Include="Avalonia" Version="12.1.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

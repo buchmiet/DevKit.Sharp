@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -17,15 +18,19 @@ namespace DevKit.Screenshot.Avalonia.Sharp;
 public static class VisualScreenshotCapture
 {
     /// <summary>Renders <paramref name="visual"/> and copies the result to the clipboard.</summary>
-    public static async Task<Bitmap> CopyToClipboardAsync(Visual visual)
+    public static async Task<Bitmap> CopyToClipboardAsync(
+        Visual visual,
+        VisualCaptureOptions? options = null)
     {
+        ArgumentNullException.ThrowIfNull(visual);
+
         var topLevel = TopLevel.GetTopLevel(visual)
             ?? throw new InvalidOperationException("Top level is not available.");
 
         var clipboard = topLevel.Clipboard
             ?? throw new InvalidOperationException("Clipboard is not available.");
 
-        using var rendered = await CaptureAsync(visual);
+        using var rendered = await CaptureAsync(visual, options);
         var clipboardBitmap = CloneBitmap(rendered);
         await clipboard.SetValueAsync(DataFormat.Bitmap, clipboardBitmap);
         await clipboard.FlushAsync();
@@ -36,8 +41,11 @@ public static class VisualScreenshotCapture
     /// <summary>Renders <paramref name="visual"/> and writes a PNG after the user picks a path.</summary>
     public static async Task<(string Path, Bitmap Preview)?> SaveToFileAsync(
         Visual visual,
-        string suggestedFileName)
+        string suggestedFileName,
+        VisualCaptureOptions? options = null)
     {
+        ArgumentNullException.ThrowIfNull(visual);
+
         var topLevel = TopLevel.GetTopLevel(visual)
             ?? throw new InvalidOperationException("Top level is not available.");
 
@@ -54,7 +62,7 @@ public static class VisualScreenshotCapture
             return null;
         }
 
-        using var rendered = await CaptureAsync(visual);
+        using var rendered = await CaptureAsync(visual, options);
         await using var stream = await targetFile.OpenWriteAsync();
         rendered.Save(stream);
 
@@ -72,8 +80,13 @@ public static class VisualScreenshotCapture
     }
 
     /// <summary>Renders <paramref name="visual"/> to a new <see cref="Bitmap"/>.</summary>
-    public static async Task<Bitmap> CaptureAsync(Visual visual)
+    public static async Task<Bitmap> CaptureAsync(
+        Visual visual,
+        VisualCaptureOptions? options = null)
     {
+        ArgumentNullException.ThrowIfNull(visual);
+        options ??= new VisualCaptureOptions();
+
         var topLevel = TopLevel.GetTopLevel(visual)
             ?? throw new InvalidOperationException("Top level is not available.");
 
@@ -89,9 +102,34 @@ public static class VisualScreenshotCapture
         var pixelSize = PixelSize.FromSize(bounds.Size, scale);
         var dpi = new Vector(96 * scale, 96 * scale);
 
-        var rendered = new RenderTargetBitmap(pixelSize, dpi);
-        rendered.Render(visual);
-        return rendered;
+        var raw = new RenderTargetBitmap(pixelSize, dpi);
+        raw.Render(visual);
+
+        if (!options.FlattenTransparency)
+            return raw;
+
+        var flat = FlattenOntoBackground(raw, visual, options, dpi);
+        raw.Dispose();
+        return flat;
+    }
+
+    private static RenderTargetBitmap FlattenOntoBackground(
+        RenderTargetBitmap raw,
+        Visual visual,
+        VisualCaptureOptions options,
+        Vector dpi)
+    {
+        var background = CaptureBackgroundResolver.Resolve(visual, options.Background);
+        var flat = new RenderTargetBitmap(raw.PixelSize, dpi);
+        var rect = new Rect(flat.PixelSize.ToSize(1));
+
+        using (var context = flat.CreateDrawingContext())
+        {
+            context.FillRectangle(background, rect);
+            context.DrawImage(raw, rect);
+        }
+
+        return flat;
     }
 
     private static async Task WaitForRenderAsync(Visual visual)

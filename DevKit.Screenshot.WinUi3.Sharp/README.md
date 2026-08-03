@@ -51,4 +51,7 @@ var (width, height, pngBytes) = await ElementScreenshotCapture.CapturePngAsync(m
 await ElementScreenshotCapture.CopyToClipboardAsync(myBorder);
 ```
 
+Element capture flattens transparency by default. Opt out with
+`new ElementCaptureOptions { FlattenTransparency = false }` or supply an explicit `Background` color.
+
 Part of the [DevKit.Sharp](https://github.com/buchmiet/DevKit.Sharp) family. MIT licensed.

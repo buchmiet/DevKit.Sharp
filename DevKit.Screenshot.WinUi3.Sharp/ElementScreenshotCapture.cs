@@ -5,6 +5,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI;
 using WinRT.Interop;
 
 namespace DevKit.Screenshot.WinUi3.Sharp;
@@ -18,9 +19,11 @@ public static class ElementScreenshotCapture
     /// <summary>Renders <paramref name="element"/> and returns PNG bytes with the pixel dimensions.</summary>
     public static async Task<(int Width, int Height, byte[] PngBytes)> CapturePngAsync(
         FrameworkElement element,
+        ElementCaptureOptions? options = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(element);
+        options ??= new ElementCaptureOptions();
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -38,10 +41,22 @@ public static class ElementScreenshotCapture
         cancellationToken.ThrowIfCancellationRequested();
 
         var pixels = await rtb.GetPixelsAsync();
+        var pixelBytes = pixels.ToArray();
+
+        if (options.FlattenTransparency)
+        {
+            var background = ElementCaptureBackgroundResolver.Resolve(element, options.Background);
+            pixelBytes = BgraPixelFlattener.FlattenOntoBackground(
+                pixelBytes,
+                rtb.PixelWidth,
+                rtb.PixelHeight,
+                background);
+        }
+
         var dpi = 96 * xamlRoot.RasterizationScale;
 
         using var stream = new InMemoryRandomAccessStream();
-        await PngEncoder.EncodeAsync(stream, pixels, rtb.PixelWidth, rtb.PixelHeight, dpi, cancellationToken);
+        await PngEncoder.EncodeAsync(stream, pixelBytes.AsBuffer(), rtb.PixelWidth, rtb.PixelHeight, dpi, cancellationToken);
 
         stream.Seek(0);
         var pngBytes = new byte[stream.Size];
@@ -53,9 +68,10 @@ public static class ElementScreenshotCapture
     /// <summary>Renders <paramref name="element"/> and copies the result to the clipboard.</summary>
     public static async Task<(int Width, int Height)> CopyToClipboardAsync(
         FrameworkElement element,
+        ElementCaptureOptions? options = null,
         CancellationToken cancellationToken = default)
     {
-        var (width, height, pngBytes) = await CapturePngAsync(element, cancellationToken);
+        var (width, height, pngBytes) = await CapturePngAsync(element, options, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -75,12 +91,13 @@ public static class ElementScreenshotCapture
         Window window,
         FrameworkElement element,
         string suggestedFileName,
+        ElementCaptureOptions? options = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(window);
         ArgumentNullException.ThrowIfNull(element);
 
-        var (_, _, pngBytes) = await CapturePngAsync(element, cancellationToken);
+        var (_, _, pngBytes) = await CapturePngAsync(element, options, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

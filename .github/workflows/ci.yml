@@ -39,6 +39,7 @@ jobs:
         run: |
           dotnet run --project tests/DevKit.Logging.Sharp.Tests -c Release --no-build
           dotnet run --project tests/DevKit.Screenshot.Sharp.Tests -c Release --no-build
+          dotnet run --project tests/DevKit.Screenshot.Avalonia.Sharp.Tests -c Release --no-build
 
       - name: Pack
         run: dotnet pack DevKit.Sharp.slnx -c Release --no-build -o artifacts/packages
