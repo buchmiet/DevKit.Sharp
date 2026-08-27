@@ -10,6 +10,8 @@ not a family pin.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-27
+
 ### Added
 
 - `DevKit.Focus.Sharp`, `DevKit.Focus.Avalonia.Sharp`, and `DevKit.Focus.WinUi3.Sharp`
@@ -25,9 +27,8 @@ not a family pin.
 - Screenshot UI adapters: `Microsoft.Extensions.DependencyInjection.Abstractions`
   **8.0.2** (`net8`) / **10.0.11** (`net10`).
 - Shared MSBuild pins for Avalonia, Windows App SDK, BuildTools, TUnit, and Test SDK.
-- Screenshot WinUI 3 has a TUnit project; CI runs all seven test hosts.
-
-These package versions are **not on NuGet yet**. Last published line is **0.1.2**.
+- Screenshot WinUI 3 has a TUnit project. GitHub-hosted CI skips WinUI test hosts (Windows App
+  SDK bootstrap hangs); run those locally.
 
 ## [0.1.2] - 2026-08-03
 
