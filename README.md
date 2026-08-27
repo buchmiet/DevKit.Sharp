@@ -1,7 +1,7 @@
 # DevKit.Sharp
 
 Small, focused dev-tooling packages for .NET desktop apps. Each ships as a separate NuGet package
-from this monorepo. See [CHANGELOG](CHANGELOG.md) for what shipped and what is still unpublished.
+from this monorepo. See [CHANGELOG](CHANGELOG.md).
 
 ## Layout
 
@@ -28,12 +28,12 @@ Adapters reference their contract with `ProjectReference`.
 | [DevKit.Screenshot.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Sharp) | Contract + `--devkit-screenshot` CLI parser | `dotnet add package DevKit.Screenshot.Sharp` |
 | [DevKit.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Avalonia.Sharp) | Main-window + element capture for Avalonia 12 | `dotnet add package DevKit.Screenshot.Avalonia.Sharp` |
 | [DevKit.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.WinUi3.Sharp) | Main-window + element capture for WinUI 3 | `dotnet add package DevKit.Screenshot.WinUi3.Sharp` |
-| DevKit.Focus.Sharp | Framework-neutral keyboard-focus policy | ships in **0.3.0** (not on NuGet yet) |
-| DevKit.Focus.Avalonia.Sharp | Avalonia 12 focus scopes | ships in **0.3.0** (not on NuGet yet) |
-| DevKit.Focus.WinUi3.Sharp | WinUI 3 focus scopes | ships in **0.3.0** (not on NuGet yet) |
+| [DevKit.Focus.Sharp](https://www.nuget.org/packages/DevKit.Focus.Sharp) | Framework-neutral keyboard-focus policy | `dotnet add package DevKit.Focus.Sharp` |
+| [DevKit.Focus.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Focus.Avalonia.Sharp) | Avalonia 12 focus scopes | `dotnet add package DevKit.Focus.Avalonia.Sharp` |
+| [DevKit.Focus.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Focus.WinUi3.Sharp) | WinUI 3 focus scopes | `dotnet add package DevKit.Focus.WinUi3.Sharp` |
 | [DevKit.Logging.Sharp](https://www.nuget.org/packages/DevKit.Logging.Sharp) | Startup-phase reporter: boot lines + console progress bar | `dotnet add package DevKit.Logging.Sharp` |
 
-> **Versioning:** each packable project has its own `<Version>` (currently `0.3.0` in tree). Do not lockstep the family — see [Versioning](#versioning). NuGet still has **0.1.2** until a `v*` tag is pushed. `0.1.0` was the first public release under the DevKit name.
+> **Versioning:** each packable project has its own `<Version>` (currently `0.3.0`). Do not lockstep the family — see [Versioning](#versioning). `0.1.0` was the first public release under the DevKit name.
 
 ## Design
 
