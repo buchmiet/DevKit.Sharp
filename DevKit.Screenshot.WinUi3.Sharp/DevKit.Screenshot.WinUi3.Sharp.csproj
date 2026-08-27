@@ -4,6 +4,7 @@
     <TargetFrameworks>net8.0-windows10.0.19041.0;net10.0-windows10.0.19041.0</TargetFrameworks>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <IsPackable>true</IsPackable>
+    <Version>0.3.0</Version>
     <Description>Main-window screenshot capture for WinUI 3 apps: AttachScreenshot one-liner for CI captures driven by --devkit-screenshot, plus IScreenshot and ElementScreenshotCapture for arbitrary elements.</Description>
     <PackageTags>screenshot;capture;winui;winui3;windows-app-sdk;ui-testing;visual-testing;ci;devkit</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -19,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0'))">
@@ -32,6 +33,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DevKit.Screenshot.Sharp\DevKit.Screenshot.Sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DevKit.Screenshot.WinUi3.Sharp.Tests" />
   </ItemGroup>
 
   <ItemGroup>

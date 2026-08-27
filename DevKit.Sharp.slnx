@@ -8,6 +8,7 @@
     <Project Path="tests/DevKit.Logging.Sharp.Tests/DevKit.Logging.Sharp.Tests.csproj" />
     <Project Path="tests/DevKit.Screenshot.Sharp.Tests/DevKit.Screenshot.Sharp.Tests.csproj" />
     <Project Path="tests/DevKit.Screenshot.Avalonia.Sharp.Tests/DevKit.Screenshot.Avalonia.Sharp.Tests.csproj" />
+    <Project Path="tests/DevKit.Screenshot.WinUi3.Sharp.Tests/DevKit.Screenshot.WinUi3.Sharp.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/Logging.Sample.Console/Logging.Sample.Console.csproj" />

@@ -7,8 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Package version to publish (for example 0.0.2)
-        required: true
+        description: Override every package Version (leave empty to use per-project Version in each csproj)
+        required: false
+        type: string
+      project:
+        description: Pack a single csproj (repo-relative). Empty packs the whole solution.
+        required: false
         type: string
 
 jobs:
@@ -30,21 +34,18 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Resolve version
-        id: version
-        shell: bash
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "value=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Verify contract boundary
         run: python eng/verify-contract-boundary.py
 
       - name: Pack
-        run: dotnet pack DevKit.Sharp.slnx -c Release -o artifacts/packages -p:Version=${{ steps.version.outputs.value }}
+        shell: pwsh
+        run: |
+          $project = "${{ github.event.inputs.project }}".Trim()
+          $override = "${{ github.event.inputs.version }}".Trim()
+          $target = if ($project) { $project } else { "DevKit.Sharp.slnx" }
+          $args = @("pack", $target, "-c", "Release", "-o", "artifacts/packages")
+          if ($override) { $args += "-p:Version=$override" }
+          dotnet @args
 
       - name: Publish to NuGet.org
         shell: bash

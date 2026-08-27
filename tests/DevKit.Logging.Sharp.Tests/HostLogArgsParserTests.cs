@@ -42,14 +42,42 @@ public class HostLogArgsParserTests
     }
 
     [Test]
-    public async Task Open_RemovesLoggerArgsFromRefArray()
+    public async Task Open_FileSink_WritesTimestampedLinesAndStripsArgs()
     {
-        var args = new[] { "left", "--devkit-logging", "file", "boot.log", "right" };
+        var path = Path.Combine(Path.GetTempPath(), $"devkit-log-{Guid.NewGuid():N}.log");
+        var args = new[] { "left", "--devkit-logging", "file", path, "right" };
 
-        using var session = HostLog.Open(ref args);
+        try
+        {
+            using (var session = HostLog.Open(ref args))
+            {
+                session.Write("hello from test");
+                session.BeginProgress(2);
+                session.CompleteStep("step-one");
+                session.CompleteStep();
+            }
 
-        using var _ = Assert.Multiple();
-        await Assert.That(session.IsEnabled).IsTrue();
-        await Assert.That(args).IsEquivalentTo(["left", "right"]);
+            var text = await File.ReadAllTextAsync(path);
+
+            using var _ = Assert.Multiple();
+            await Assert.That(args).IsEquivalentTo(["left", "right"]);
+            await Assert.That(text).Contains("Host event logger file:");
+            await Assert.That(text).Contains("hello from test");
+            await Assert.That(text).Contains("[progress] begin 2 steps");
+            await Assert.That(text).Contains("step-one");
+            await Assert.That(text).Contains("[progress] 2/2");
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
+    [Test]
+    public async Task Open_FileSinkWithoutPath_Throws()
+    {
+        var action = () => HostLog.Open(new HostLogOptions { Sink = HostLogSink.File });
+        await Assert.That(action).Throws<ArgumentException>();
     }
 }
