@@ -42,7 +42,6 @@ jobs:
             'tests/DevKit.Logging.Sharp.Tests',
             'tests/DevKit.Screenshot.Sharp.Tests',
             'tests/DevKit.Screenshot.Avalonia.Sharp.Tests',
-            'tests/DevKit.Screenshot.WinUi3.Sharp.Tests',
             'tests/DevKit.Focus.Sharp.Tests',
             'tests/DevKit.Focus.Avalonia.Sharp.Tests'
           )
@@ -51,9 +50,11 @@ jobs:
             dotnet run --project $p -c Release --no-build
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
-          # WinUI dispatcher + Windows App SDK bootstrap hang on hosted windows-latest
-          # (no interactive session). Run locally: dotnet run --project tests/DevKit.Focus.WinUi3.Sharp.Tests -c Release
-          Write-Host '=== tests/DevKit.Focus.WinUi3.Sharp.Tests skipped on GitHub-hosted Windows ==='
+          # Windows App SDK bootstrap hangs on hosted windows-latest (even BGRA-only WinUI tests).
+          # Run locally:
+          #   dotnet run --project tests/DevKit.Screenshot.WinUi3.Sharp.Tests -c Release
+          #   dotnet run --project tests/DevKit.Focus.WinUi3.Sharp.Tests -c Release
+          Write-Host '=== WinUI test hosts skipped on GitHub-hosted Windows ==='
 
       - name: Pack
         run: dotnet pack DevKit.Sharp.slnx -c Release --no-build -o artifacts/packages
