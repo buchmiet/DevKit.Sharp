@@ -115,11 +115,13 @@ Rules that make UI-library bumps possible without dragging Logging:
 4. Tag `v*` publishes whatever versions are in the tree. Leave unchanged packages at their last number; NuGet skip-duplicate ignores them.
 
 This 0.3.0 line: WinUI min SDK is **2.4.0**. Avalonia adapter still requires Avalonia **12.1.0**.
+`Microsoft.Extensions.DependencyInjection.Abstractions` on the UI adapters is **8.0.2** (`net8`) / **10.0.11** (`net10`).
 
 ## Requirements
 
 - .NET SDK 10 to build the repo; packages target `netstandard2.0`/`net8.0`/`net10.0`
 - Avalonia 12.1+ (Avalonia package), Windows App SDK **2.4** + Windows 10 17763+ (WinUI 3 package)
+- `Microsoft.Extensions.DependencyInjection.Abstractions` 8.0.2 (`net8`) / 10.0.11 (`net10`) on the UI screenshot packages
 
 ## License
 
