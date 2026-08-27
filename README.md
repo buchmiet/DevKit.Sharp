@@ -1,7 +1,7 @@
 # DevKit.Sharp
 
 Small, focused dev-tooling packages for .NET desktop apps. Each ships as a separate NuGet package
-from this monorepo.
+from this monorepo. See [CHANGELOG](CHANGELOG.md) for what shipped and what is still unpublished.
 
 ## Layout
 
@@ -19,7 +19,7 @@ samples/                              twin Avalonia / WinUI apps + logging hosts
 eng/verify-contract-boundary.py       Screenshot.Sharp + Focus.Sharp stay UI-free
 ```
 
-Adapters reference their contract with `ProjectReference`. There is no sibling-repo checkout.
+Adapters reference their contract with `ProjectReference`.
 
 ## NuGet packages
 
@@ -28,12 +28,12 @@ Adapters reference their contract with `ProjectReference`. There is no sibling-r
 | [DevKit.Screenshot.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Sharp) | Contract + `--devkit-screenshot` CLI parser | `dotnet add package DevKit.Screenshot.Sharp` |
 | [DevKit.Screenshot.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.Avalonia.Sharp) | Main-window + element capture for Avalonia 12 | `dotnet add package DevKit.Screenshot.Avalonia.Sharp` |
 | [DevKit.Screenshot.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Screenshot.WinUi3.Sharp) | Main-window + element capture for WinUI 3 | `dotnet add package DevKit.Screenshot.WinUi3.Sharp` |
-| [DevKit.Focus.Sharp](https://www.nuget.org/packages/DevKit.Focus.Sharp) | Framework-neutral keyboard-focus policy | `dotnet add package DevKit.Focus.Sharp` |
-| [DevKit.Focus.Avalonia.Sharp](https://www.nuget.org/packages/DevKit.Focus.Avalonia.Sharp) | Avalonia 12 focus scopes | `dotnet add package DevKit.Focus.Avalonia.Sharp` |
-| [DevKit.Focus.WinUi3.Sharp](https://www.nuget.org/packages/DevKit.Focus.WinUi3.Sharp) | WinUI 3 focus scopes | `dotnet add package DevKit.Focus.WinUi3.Sharp` |
+| DevKit.Focus.Sharp | Framework-neutral keyboard-focus policy | ships in **0.3.0** (not on NuGet yet) |
+| DevKit.Focus.Avalonia.Sharp | Avalonia 12 focus scopes | ships in **0.3.0** (not on NuGet yet) |
+| DevKit.Focus.WinUi3.Sharp | WinUI 3 focus scopes | ships in **0.3.0** (not on NuGet yet) |
 | [DevKit.Logging.Sharp](https://www.nuget.org/packages/DevKit.Logging.Sharp) | Startup-phase reporter: boot lines + console progress bar | `dotnet add package DevKit.Logging.Sharp` |
 
-> **Versioning:** each packable project has its own `<Version>` (currently `0.3.0`). Do not lockstep the family — see [Versioning](#versioning). `0.1.0` was the first public release under the DevKit name.
+> **Versioning:** each packable project has its own `<Version>` (currently `0.3.0` in tree). Do not lockstep the family — see [Versioning](#versioning). NuGet still has **0.1.2** until a `v*` tag is pushed. `0.1.0` was the first public release under the DevKit name.
 
 ## Design
 
@@ -106,7 +106,7 @@ dotnet run --project samples/Logging.Sample.Console -- --devkit-logging console
 
 ## Publishing
 
-CI runs on every push and pull request to `main`. Packages are published to NuGet.org when a
+CI runs on pushes and pull requests to `main` and `fix/**`. Packages are published to NuGet.org when a
 `v*` tag is pushed. The tag is a **release marker**; each nupkg uses the `<Version>` in its
 `.csproj`. Already-published versions are skipped (`--skip-duplicate`), so you can tag after
 bumping only the WinUI adapter.
@@ -134,7 +134,7 @@ Stay on **0.x SemVer** until a 1.0 contract freeze. In 0.x:
 
 Rules that make UI-library bumps possible without dragging Logging:
 
-1. **One `<Version>` per packable csproj.** Never a shared family pin (that is what blocked a WinUI-only WASDK bump).
+1. **One `<Version>` per packable csproj.** Never a shared family pin: raising one adapter's UI-library floor must not bump Logging or other tools.
 2. **Min version in `PackageReference` is the consumer floor.** Raising `Microsoft.WindowsAppSDK` from `2.2.0` to `2.4.0` is a MINOR of `DevKit.Screenshot.WinUi3.Sharp` only. Consumers on 2.2 cannot restore that nupkg without taking 2.4 — that is intentional if your app already runs 2.4.
 3. **New UI library = new package**, not a version of an existing adapter.
 4. Tag `v*` publishes whatever versions are in the tree. Leave unchanged packages at their last number; NuGet skip-duplicate ignores them.
