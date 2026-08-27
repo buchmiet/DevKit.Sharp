@@ -1,0 +1,76 @@
+name: unauthorized-attribution
+
+# Receive-time commit metadata rulesets need GitHub Enterprise Cloud.
+# This check is the public-repo stand-in: fail CI when a pushed/PR range
+# contains unauthorized AI author/committer or attribution trailers.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unauthorized-attribution:
+    name: unauthorized-attribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reject unauthorized AI attribution
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          zeros=0000000000000000000000000000000000000000
+          if [ "$EVENT" = pull_request ]; then
+            range="${BASE}..${SHA}"
+          elif [ -z "${BEFORE:-}" ] || [ "$BEFORE" = "$zeros" ]; then
+            if git rev-parse --verify origin/main >/dev/null 2>&1; then
+              range="origin/main..${SHA}"
+            else
+              range="$SHA"
+            fi
+          else
+            range="${BEFORE}..${SHA}"
+          fi
+
+          echo "Scanning $range"
+          # Empty range (push that only moves a tag / no new commits vs main) is fine.
+          if [ -z "$(git rev-list $range 2>/dev/null || true)" ]; then
+            echo "No new commits in range."
+            exit 0
+          fi
+
+          bad=0
+          while IFS= read -r commit; do
+            ident="$(git log -1 --format='%an <%ae>%n%cn <%ce>' "$commit")"
+            body="$(git log -1 --format=%B "$commit")"
+            if echo "$ident" | grep -qiE 'cursoragent@cursor\.com|junie@jetbrains\.com|noreply@anthropic\.com|cursor\[bot\]'; then
+              echo "::error::unauthorized identity on $commit"
+              echo "$ident"
+              bad=1
+            fi
+            if echo "$ident" | grep -qiE '^Cursor Agent[[:space:]]*<' || echo "$ident" | grep -qiE '^Junie[[:space:]]*<' || echo "$ident" | grep -qiE '^Claude[[:space:]]*<'; then
+              echo "::error::unauthorized identity on $commit"
+              echo "$ident"
+              bad=1
+            fi
+            if echo "$body" | grep -qiE 'co-authored-by:|^[[:space:]]*made-with:|generated with \[claude code\]'; then
+              echo "::error::unauthorized attribution in $commit"
+              git log -1 --format='%h %s' "$commit"
+              bad=1
+            fi
+          done < <(git rev-list $range)
+
+          if [ "$bad" -ne 0 ]; then
+            echo "Authorization/attribution of Cursor Agent, Junie, or Claude is unauthorized by the owner."
+            exit 1
+          fi
+          echo "OK"
