@@ -1,14 +1,26 @@
 <Solution>
-  <Project Path="DevKit.Screenshot.Sharp/DevKit.Screenshot.Sharp.csproj" />
-  <Project Path="DevKit.Screenshot.Avalonia.Sharp/DevKit.Screenshot.Avalonia.Sharp.csproj" />
-  <Project Path="DevKit.Screenshot.WinUi3.Sharp/DevKit.Screenshot.WinUi3.Sharp.csproj" />
-  <Project Path="DevKit.Logging.Sharp/DevKit.Logging.Sharp.csproj" />
-  <Project Path="DevKit.Logging.Runner/DevKit.Logging.Runner.csproj" />
+  <Folder Name="/contracts/">
+    <Project Path="DevKit.Screenshot.Sharp/DevKit.Screenshot.Sharp.csproj" />
+    <Project Path="DevKit.Focus.Sharp/DevKit.Focus.Sharp.csproj" />
+    <Project Path="DevKit.Logging.Sharp/DevKit.Logging.Sharp.csproj" />
+  </Folder>
+  <Folder Name="/adapters/">
+    <Project Path="DevKit.Screenshot.Avalonia.Sharp/DevKit.Screenshot.Avalonia.Sharp.csproj" />
+    <Project Path="DevKit.Screenshot.WinUi3.Sharp/DevKit.Screenshot.WinUi3.Sharp.csproj" />
+    <Project Path="DevKit.Focus.Avalonia.Sharp/DevKit.Focus.Avalonia.Sharp.csproj" />
+    <Project Path="DevKit.Focus.WinUi3.Sharp/DevKit.Focus.WinUi3.Sharp.csproj" />
+  </Folder>
+  <Folder Name="/hosts/">
+    <Project Path="DevKit.Logging.Runner/DevKit.Logging.Runner.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DevKit.Logging.Sharp.Tests/DevKit.Logging.Sharp.Tests.csproj" />
     <Project Path="tests/DevKit.Screenshot.Sharp.Tests/DevKit.Screenshot.Sharp.Tests.csproj" />
     <Project Path="tests/DevKit.Screenshot.Avalonia.Sharp.Tests/DevKit.Screenshot.Avalonia.Sharp.Tests.csproj" />
     <Project Path="tests/DevKit.Screenshot.WinUi3.Sharp.Tests/DevKit.Screenshot.WinUi3.Sharp.Tests.csproj" />
+    <Project Path="tests/DevKit.Focus.Sharp.Tests/DevKit.Focus.Sharp.Tests.csproj" />
+    <Project Path="tests/DevKit.Focus.Avalonia.Sharp.Tests/DevKit.Focus.Avalonia.Sharp.Tests.csproj" />
+    <Project Path="tests/DevKit.Focus.WinUi3.Sharp.Tests/DevKit.Focus.WinUi3.Sharp.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/Logging.Sample.Console/Logging.Sample.Console.csproj" />

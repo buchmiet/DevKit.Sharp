@@ -1,8 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetFrameworks>net8.0-windows10.0.19041.0;net10.0-windows10.0.19041.0</TargetFrameworks>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <IsPackable>true</IsPackable>
+    <Version>0.3.0</Version>
+    <Description>WinUI 3 keyboard-focus scopes, XamlRoot-aware visual-tree inspection, DispatcherQueue scheduling, and window activation restoration for DevKit.Focus.Sharp.</Description>
+    <PackageTags>focus;keyboard;winui;winui3;windows-app-sdk;desktop;ui;devkit</PackageTags>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
@@ -18,7 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevKit.Screenshot.WinUi3.Sharp\DevKit.Screenshot.WinUi3.Sharp.csproj" />
+    <ProjectReference Include="..\DevKit.Focus.Sharp\DevKit.Focus.Sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

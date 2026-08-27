@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevKit.Logging.Sharp\DevKit.Logging.Sharp.csproj" />
+    <ProjectReference Include="..\..\DevKit.Focus.Sharp\DevKit.Focus.Sharp.csproj" />
   </ItemGroup>
 
 </Project>

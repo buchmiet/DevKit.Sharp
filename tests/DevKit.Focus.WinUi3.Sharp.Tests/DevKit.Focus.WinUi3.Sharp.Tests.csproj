@@ -7,6 +7,7 @@
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSdkBootstrapInitialize>true</WindowsAppSdkBootstrapInitialize>
     <AppxGeneratePriEnabled>false</AppxGeneratePriEnabled>
     <AppxGeneratePrisForPortableLibrariesEnabled>false</AppxGeneratePrisForPortableLibrariesEnabled>
     <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
@@ -18,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DevKit.Screenshot.WinUi3.Sharp\DevKit.Screenshot.WinUi3.Sharp.csproj" />
+    <ProjectReference Include="..\..\DevKit.Focus.WinUi3.Sharp\DevKit.Focus.WinUi3.Sharp.csproj" />
   </ItemGroup>
 
 </Project>
