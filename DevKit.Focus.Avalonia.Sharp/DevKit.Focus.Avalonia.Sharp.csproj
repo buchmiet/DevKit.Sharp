@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <Version>0.3.0</Version>
+    <Description>Avalonia 12 keyboard-focus scopes, visual-tree inspection, UI-thread scheduling, and window activation restoration for DevKit.Focus.Sharp.</Description>
+    <PackageTags>focus;keyboard;avalonia;desktop;ui;devkit</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevKit.Focus.Sharp\DevKit.Focus.Sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

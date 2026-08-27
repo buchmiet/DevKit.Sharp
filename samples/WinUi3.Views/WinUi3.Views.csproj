@@ -9,19 +9,20 @@
     <AssemblyName>WinUi3.Views</AssemblyName>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
-    <EnableMsixTooling>false</EnableMsixTooling>
+    <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
-    <AppxGeneratePriEnabled>false</AppxGeneratePriEnabled>
-    <AppxGeneratePrisForPortableLibrariesEnabled>false</AppxGeneratePrisForPortableLibrariesEnabled>
-    <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
+    <AppxGeneratePriEnabled>true</AppxGeneratePriEnabled>
+    <AppxGeneratePrisForPortableLibrariesEnabled>true</AppxGeneratePrisForPortableLibrariesEnabled>
+    <EnableCoreMrtTooling>true</EnableCoreMrtTooling>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(WindowsSdkBuildToolsVersion)" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DevKit.Screenshot.WinUi3.Sharp\DevKit.Screenshot.WinUi3.Sharp.csproj" />
     <ProjectReference Include="..\Sample.ViewModels\Sample.ViewModels.csproj" />
   </ItemGroup>
 

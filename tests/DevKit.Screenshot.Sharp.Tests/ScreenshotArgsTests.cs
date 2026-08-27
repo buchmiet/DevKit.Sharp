@@ -4,136 +4,59 @@ namespace DevKit.Screenshot.Sharp.Tests;
 
 public class ScreenshotArgsTests
 {
-    [Test]
-    public async Task ParseAndRemove_PathSwitch_SetsOutputPathAndRemovesTokens()
+    public static IEnumerable<Func<(string[] Input, bool Enabled, string? OutputPath, bool Clipboard, bool Exit, int DelayMs, string[] Remaining)>> ParseCases()
     {
-        var args = new[] { "run", "--devkit-screenshot", @"artifacts\shot.png", "--verbose" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.IsEnabled).IsTrue();
-        await Assert.That(options.OutputPath).IsEqualTo(@"artifacts\shot.png");
-        await Assert.That(options.CopyToClipboard).IsFalse();
-        await Assert.That(options.ExitAfterCapture).IsFalse();
-        await Assert.That(options.Delay).IsEqualTo(ScreenshotOptions.DefaultDelay);
-        await Assert.That(args).IsEquivalentTo(["run", "--verbose"]);
+        yield return () => (
+            ["run", "--devkit-screenshot", @"artifacts\shot.png", "--verbose"],
+            true, @"artifacts\shot.png", false, false, 150, ["run", "--verbose"]);
+        yield return () => (
+            ["run", "--devkit-screenshot-clipboard", "--verbose"],
+            true, null, true, false, 150, ["run", "--verbose"]);
+        yield return () => (
+            ["left", "--devkit-screenshot", "shot.png", "--devkit-screenshot-exit", "--devkit-screenshot-delay", "300", "right"],
+            true, "shot.png", false, true, 300, ["left", "right"]);
+        yield return () => (
+            ["--devkit-screenshot-clipboard", "--devkit-screenshot-exit", "--devkit-screenshot-delay", "250"],
+            true, null, true, true, 250, []);
+        yield return () => (
+            ["--devkit-screenshot", "shot.png", "--devkit-screenshot-clipboard"],
+            true, null, true, false, 150, []);
+        yield return () => (
+            ["import", "--path", @"C:\data"],
+            false, null, false, false, 150, ["import", "--path", @"C:\data"]);
+        yield return () => (
+            ["run", "--devkit-screenshot"],
+            false, null, false, false, 150, ["run"]);
+        yield return () => (
+            ["--devkit-screenshot", "shot.png", "--devkit-screenshot-delay", "-5"],
+            true, "shot.png", false, false, 150, ["-5"]);
+        yield return () => (
+            ["--DevKit-Screenshot", "shot.png", "--DEVKIT-SCREENSHOT-EXIT"],
+            true, "shot.png", false, true, 150, []);
     }
 
     [Test]
-    public async Task ParseAndRemove_ClipboardSwitch_EnablesClipboardCapture()
+    [MethodDataSource(nameof(ParseCases))]
+    public async Task ParseAndRemove_SwitchMatrix(
+        string[] input,
+        bool enabled,
+        string? outputPath,
+        bool clipboard,
+        bool exit,
+        int delayMs,
+        string[] remaining)
     {
-        var args = new[] { "run", "--devkit-screenshot-clipboard", "--verbose" };
+        var args = input;
 
         var options = ScreenshotArgs.ParseAndRemove(ref args);
 
         using var _ = Assert.Multiple();
-        await Assert.That(options.IsEnabled).IsTrue();
-        await Assert.That(options.CopyToClipboard).IsTrue();
-        await Assert.That(options.OutputPath).IsNull();
-        await Assert.That(args).IsEquivalentTo(["run", "--verbose"]);
-    }
-
-    [Test]
-    public async Task ParseAndRemove_AllSwitches_ParsesEverything()
-    {
-        var args = new[]
-        {
-            "left",
-            "--devkit-screenshot", "shot.png",
-            "--devkit-screenshot-exit",
-            "--devkit-screenshot-delay", "300",
-            "right",
-        };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.OutputPath).IsEqualTo("shot.png");
-        await Assert.That(options.CopyToClipboard).IsFalse();
-        await Assert.That(options.ExitAfterCapture).IsTrue();
-        await Assert.That(options.Delay).IsEqualTo(TimeSpan.FromMilliseconds(300));
-        await Assert.That(args).IsEquivalentTo(["left", "right"]);
-    }
-
-    [Test]
-    public async Task ParseAndRemove_ClipboardWithExitAndDelay_ParsesEverything()
-    {
-        var args = new[]
-        {
-            "--devkit-screenshot-clipboard",
-            "--devkit-screenshot-exit",
-            "--devkit-screenshot-delay", "250",
-        };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.CopyToClipboard).IsTrue();
-        await Assert.That(options.ExitAfterCapture).IsTrue();
-        await Assert.That(options.Delay).IsEqualTo(TimeSpan.FromMilliseconds(250));
-        await Assert.That(args).IsEquivalentTo(Array.Empty<string>());
-    }
-
-    [Test]
-    public async Task ParseAndRemove_PathAndClipboard_PrefersClipboard()
-    {
-        var args = new[] { "--devkit-screenshot", "shot.png", "--devkit-screenshot-clipboard" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.CopyToClipboard).IsTrue();
-        await Assert.That(options.OutputPath).IsNull();
-    }
-
-    [Test]
-    public async Task ParseAndRemove_NoSwitches_ReturnsDisabledAndKeepsArgs()
-    {
-        var args = new[] { "import", "--path", @"C:\data" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.IsEnabled).IsFalse();
-        await Assert.That(args).IsEquivalentTo(["import", "--path", @"C:\data"]);
-    }
-
-    [Test]
-    public async Task ParseAndRemove_MissingPath_DisablesCapture()
-    {
-        var args = new[] { "run", "--devkit-screenshot" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.IsEnabled).IsFalse();
-        await Assert.That(args).IsEquivalentTo(["run"]);
-    }
-
-    [Test]
-    public async Task ParseAndRemove_InvalidDelay_FallsBackToDefault()
-    {
-        var args = new[] { "--devkit-screenshot", "shot.png", "--devkit-screenshot-delay", "-5" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.Delay).IsEqualTo(ScreenshotOptions.DefaultDelay);
-        await Assert.That(options.OutputPath).IsEqualTo("shot.png");
-    }
-
-    [Test]
-    public async Task ParseAndRemove_SwitchesAreCaseInsensitive()
-    {
-        var args = new[] { "--DevKit-Screenshot", "shot.png", "--DEVKIT-SCREENSHOT-EXIT" };
-
-        var options = ScreenshotArgs.ParseAndRemove(ref args);
-
-        using var _ = Assert.Multiple();
-        await Assert.That(options.OutputPath).IsEqualTo("shot.png");
-        await Assert.That(options.ExitAfterCapture).IsTrue();
-        await Assert.That(args).IsEquivalentTo(Array.Empty<string>());
+        await Assert.That(options.IsEnabled).IsEqualTo(enabled);
+        await Assert.That(options.OutputPath).IsEqualTo(outputPath);
+        await Assert.That(options.CopyToClipboard).IsEqualTo(clipboard);
+        await Assert.That(options.ExitAfterCapture).IsEqualTo(exit);
+        await Assert.That(options.Delay).IsEqualTo(TimeSpan.FromMilliseconds(delayMs));
+        await Assert.That(args).IsEquivalentTo(remaining);
     }
 
     [Test]

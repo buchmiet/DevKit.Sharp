@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 root = Path(__file__).resolve().parents[1]
 
-strict_contract_dirs = ("DevKit.Screenshot.Sharp",)
+strict_contract_dirs = ("DevKit.Screenshot.Sharp", "DevKit.Focus.Sharp")
 dependency_only_contract_dirs = ("DevKit.Logging.Sharp",)
 
 forbidden_tokens = (

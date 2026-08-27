@@ -3,14 +3,14 @@ using DevKit.Screenshot.WinUi3.Sharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Sample.ViewModels;
-using ViewsMainWindow = WinUi3.Views.MainWindow;
+using WinUi3.Views;
 
 namespace WinUi3.App;
 
 public partial class App : Application
 {
     private ServiceProvider? _services;
-    private ViewsMainWindow? _window;
+    private MainWindow? _window;
 
     public Window? MainWindow => _window;
 
@@ -29,10 +29,10 @@ public partial class App : Application
         services.AddScreenshot(_ => _window
             ?? throw new InvalidOperationException("Main window has not been created yet."));
         services.AddSingleton<MainWindowViewModel>();
-        services.AddSingleton<ViewsMainWindow>();
+        services.AddSingleton<MainWindow>();
         _services = services.BuildServiceProvider();
 
-        _window = _services.GetRequiredService<ViewsMainWindow>();
+        _window = _services.GetRequiredService<MainWindow>();
         _window.Closed += (_, _) =>
         {
             _services?.Dispose();

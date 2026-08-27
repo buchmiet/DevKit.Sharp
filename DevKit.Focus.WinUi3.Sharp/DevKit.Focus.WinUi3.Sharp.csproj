@@ -5,9 +5,8 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <IsPackable>true</IsPackable>
     <Version>0.3.0</Version>
-    <Description>Main-window screenshot capture for WinUI 3 apps: AttachScreenshot one-liner for CI captures driven by --devkit-screenshot, plus IScreenshot and ElementScreenshotCapture for arbitrary elements.</Description>
-    <PackageTags>screenshot;capture;winui;winui3;windows-app-sdk;ui-testing;visual-testing;ci;devkit</PackageTags>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>WinUI 3 keyboard-focus scopes, XamlRoot-aware visual-tree inspection, DispatcherQueue scheduling, and window activation restoration for DevKit.Focus.Sharp.</Description>
+    <PackageTags>focus;keyboard;winui;winui3;windows-app-sdk;desktop;ui;devkit</PackageTags>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
@@ -15,7 +14,6 @@
     <AppxGeneratePriEnabled>false</AppxGeneratePriEnabled>
     <AppxGeneratePrisForPortableLibrariesEnabled>false</AppxGeneratePrisForPortableLibrariesEnabled>
     <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,20 +21,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0'))">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0'))">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
-  </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\DevKit.Screenshot.Sharp\DevKit.Screenshot.Sharp.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="DevKit.Screenshot.WinUi3.Sharp.Tests" />
+    <ProjectReference Include="..\DevKit.Focus.Sharp\DevKit.Focus.Sharp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

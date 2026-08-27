@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <Version>0.3.0</Version>
+    <Description>Framework-neutral keyboard focus scopes, coordination policy, ownership, tracing, and composite workspaces for .NET desktop applications.</Description>
+    <PackageTags>focus;keyboard;desktop;ui;devkit</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
